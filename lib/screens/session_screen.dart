@@ -5,11 +5,11 @@ import 'package:test_project1/screens/signin_screen.dart';
 import 'package:test_project1/utils/workout_tile.dart';
 import 'package:test_project1/utils/workout_type.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class SessionScreen extends StatefulWidget {
+  const SessionScreen({Key? key}) : super(key: key);
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _SessionScreenState createState() => _SessionScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {

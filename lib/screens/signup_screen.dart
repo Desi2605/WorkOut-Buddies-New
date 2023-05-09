@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:test_project1/reusable_widgets/resusable_widgets.dart';
@@ -66,6 +67,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           email: _emailTextController.text,
                           password: _passwordTextController.text)
                       .then((value) {
+                    FirebaseFirestore.instance.collection("Users").add({
+                      "Username": _userNameTextController.text,
+                      "Email": _emailTextController.text,
+                      "Password": _passwordTextController.text
+                    });
                     print("Account Has Been Created");
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => HomeScreen()));
