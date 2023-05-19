@@ -10,9 +10,16 @@ Image logoWidget(String imageName) {
   );
 }
 
-TextField reusableTextFieild(String text, IconData icon, bool isPasswordType,
-    TextEditingController controller) {
-  return TextField(
+TextFormField reusableTextFieild(String text, IconData icon,
+    bool isPasswordType, TextEditingController controller,
+    {bool? validator}) {
+  return TextFormField(
+    validator: (value) => value!.isNotEmpty
+        ? validator!
+            ? ""
+            : ""
+        : "Email field cannot be empty", // Will check if email is true or false
+
     controller: controller,
     obscureText: isPasswordType, // if its the password type it will just follow
     enableSuggestions:
@@ -41,8 +48,7 @@ TextField reusableTextFieild(String text, IconData icon, bool isPasswordType,
   );
 }
 
-Container signInSignUpButton(
-    BuildContext context, bool isLogin, Function onTap) {
+Container FirebaseButtons(BuildContext context, String title, Function onTap) {
   return Container(
     width: MediaQuery.of(context).size.width,
     height: 50,
@@ -53,7 +59,7 @@ Container signInSignUpButton(
           onTap();
         },
         child: Text(
-          isLogin ? 'LOG IN' : 'SIGN UP',
+          title,
           style: const TextStyle(
               color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 16),
         ),

@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:test_project1/screens/session_create.dart';
 import 'package:test_project1/screens/signin_screen.dart';
 import 'package:test_project1/utils/workout_tile.dart';
 import 'package:test_project1/utils/workout_type.dart';
@@ -13,23 +14,69 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   // user tap on type
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.grey[900],
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
-        leading: Icon(Icons.menu),
+        leading: IconButton(
+          icon: Icon(Icons.menu),
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer(); // Open the drawer
+          },
+        ),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 20.0),
+            padding: const EdgeInsets.only(right: 20.5),
             child: Icon(Icons.person),
           )
         ],
       ),
+
+      //------------------------------------------------------------------//
+      drawer: Drawer(
+        child: Column(
+          mainAxisAlignment:
+              MainAxisAlignment.center, //Need to Edit this to make it Nice
+          children: [
+            ListTile(
+              title: Text('Create Workout Session'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SessionCreate()),
+                );
+              },
+            ),
+            // Workout Sessions
+            ListTile(
+              title: Text('View Workout Sessions'),
+              onTap: () {},
+            ),
+
+            // View Challenges
+            ListTile(
+              title: Text('View Workout Challenges'),
+              onTap: () {},
+            ),
+
+            //Rewards
+            ListTile(
+              title: Text('Rewards'),
+              onTap: () {},
+            ),
+          ],
+        ),
+      ),
+
+//-------------------------------------------------------------------------//
+
       body: Column(children: [
         //Choose the best Workout For you
         Padding(
@@ -40,6 +87,8 @@ class _HomeScreenState extends State<HomeScreen> {
               )),
         ),
         SizedBox(height: 25),
+
+//------------------------------------------------------------------------//
 
         //Search Bar
         Padding(
@@ -57,6 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
+//----------------------------------------------------------------------//
 
         SizedBox(height: 25),
         // List of Workouts
@@ -95,3 +145,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+//---------------------------------------------------------------------------//

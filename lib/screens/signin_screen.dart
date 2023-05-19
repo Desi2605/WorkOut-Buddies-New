@@ -3,8 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:test_project1/reusable_widgets/resusable_widgets.dart';
 import 'package:test_project1/screens/homescreen_screen.dart';
+import 'package:test_project1/screens/reset_password.dart';
 import 'package:test_project1/screens/signup_screen.dart';
 import 'package:test_project1/utils/colors_util.dart';
+import 'package:test_project1/screens/session_create.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
@@ -24,9 +26,9 @@ class _SignInScreenState extends State<SignInScreen> {
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
             gradient: LinearGradient(colors: [
-          hexStringToColor("CB2B93"),
-          hexStringToColor("9546C4"),
-          hexStringToColor("5E61F4")
+          hexStringToColor("808080"),
+          hexStringToColor("000000"),
+          hexStringToColor("000000")
         ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
         child: SingleChildScrollView(
           child: Padding(
@@ -38,30 +40,50 @@ class _SignInScreenState extends State<SignInScreen> {
                 SizedBox(
                   height: 30,
                 ),
-                reusableTextFieild("Email", Icons.mail_lock_outlined, false,
-                    _emailTextController),
+                reusableTextFieild(" Enter Email", Icons.mail_lock_outlined,
+                    false, _emailTextController),
                 SizedBox(
                   height: 20,
                 ),
-                reusableTextFieild("Password", Icons.lock_outline, true,
+                reusableTextFieild("Enter Password", Icons.lock_outline, true,
                     _passwordTextController),
                 SizedBox(
-                  height: 20,
+                  height: 3,
                 ),
-                signInSignUpButton(context, true, () {
-                  FirebaseAuth.instance
-                      .signInWithEmailAndPassword(
-                          email: _emailTextController.text,
-                          password: _passwordTextController.text)
-                      .then(
-                    (value) {
+                forgetPassword(context),
+                FirebaseButtons(
+                  context,
+                  "SIGN IN HERE",
+                  () {
+                    FirebaseAuth.instance
+                        .signInWithEmailAndPassword(
+                            email: _emailTextController.text,
+                            password: _passwordTextController.text)
+                        .then((value) {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => HomeScreen()));
-                    },
-                  );
-                }),
+                        context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                      );
+                    }).catchError((error) {
+                      //the handler for error message
+                      print("Error signing in: $error");
+                      // This is for Error Message when wrong email or password
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text("Error"),
+                          content: Text("Invalid email or password."),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text("OK"),
+                            ),
+                          ],
+                        ),
+                      );
+                    });
+                  },
+                ),
                 signUpOption()
               ],
             ),
@@ -88,6 +110,22 @@ class _SignInScreenState extends State<SignInScreen> {
           ),
         )
       ],
+    );
+  }
+
+  Widget forgetPassword(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: 35,
+      alignment: Alignment.bottomRight,
+      child: TextButton(
+          child: Text(
+            "Forgot Password ?",
+            style: TextStyle(color: Colors.white70),
+            textAlign: TextAlign.right,
+          ),
+          onPressed: () => Navigator.push(context,
+              MaterialPageRoute(builder: (context) => ResetPassword()))),
     );
   }
 }
