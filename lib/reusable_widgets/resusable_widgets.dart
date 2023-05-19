@@ -10,13 +10,13 @@ Image logoWidget(String imageName) {
   );
 }
 
-TextFormField reusableTextFieild(String text, IconData icon,
-    bool isPasswordType, TextEditingController controller,
-    {bool? validator}) {
+TextFormField reusableTextField(String text, IconData icon, bool isPasswordType,
+    TextEditingController controller,
+    {bool validator = true}) {
   return TextFormField(
     validator: (value) => value!.isNotEmpty
-        ? validator!
-            ? ""
+        ? validator
+            ? null
             : ""
         : "Email field cannot be empty", // Will check if email is true or false
 

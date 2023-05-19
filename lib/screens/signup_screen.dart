@@ -19,13 +19,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
   TextEditingController _lastnameTextController = TextEditingController();
   TextEditingController _emailTextController = TextEditingController();
   TextEditingController _userNameTextController = TextEditingController();
-  GlobalKey<FormFieldState> formsignup = GlobalKey();
+  GlobalKey<FormState> formsignup =
+      GlobalKey<FormState>(); // Used for email specification
 
-  // Function to validate email using regular expressions
   bool validateEmail(String email) {
-    // Regular expression pattern for email validation
     final pattern =
-        r'^[\w-]+(\.[\w-]+)*@([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,7}$'; // change this later
+        r'^[\w-]+(\.[\w-]+)*@([a-zA-Z0-9-]+\.)+uniten\.edu\.my$'; // Email specification in Student.uniten.edu.my
     final regExp = RegExp(pattern);
     return regExp.hasMatch(email);
   }
@@ -61,7 +60,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   const SizedBox(
                     height: 20,
                   ),
-                  reusableTextFieild(
+                  reusableTextField(
                     "Enter Firstname",
                     Icons.person_outlined,
                     false,
@@ -70,23 +69,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   const SizedBox(
                     height: 20,
                   ),
-                  reusableTextFieild("Enter Lastname", Icons.person_outlined,
+                  reusableTextField("Enter Lastname", Icons.person_outlined,
                       false, _lastnameTextController),
                   const SizedBox(
                     height: 20,
                   ),
-                  reusableTextFieild("Enter Username", Icons.person_outlined,
+                  reusableTextField("Enter Username", Icons.person_outlined,
                       false, _userNameTextController),
                   const SizedBox(
                     height: 20,
                   ),
-                  reusableTextFieild("Enter Email", Icons.mail_lock_outlined,
+                  reusableTextField("Enter Email", Icons.mail_lock_outlined,
                       false, _emailTextController,
                       validator: validateEmail(_emailTextController.text)),
                   const SizedBox(
                     height: 20,
                   ),
-                  reusableTextFieild("Enter Password", Icons.lock_outlined,
+                  reusableTextField("Enter Password", Icons.lock_outlined,
                       false, _passwordTextController),
                   const SizedBox(
                     height: 20,
@@ -122,7 +121,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             builder: (context) => AlertDialog(
                               title: Text("Error"),
                               content: Text(
-                                  "Invalid email or password."), // edit this
+                                  "Please use Uniten Student Email"), // Error Message for Email
                               actions: [
                                 TextButton(
                                   onPressed: () => Navigator.pop(context),

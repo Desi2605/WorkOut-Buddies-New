@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:test_project1/reusable_widgets/resusable_widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:test_project1/screens/test.dart';
+import 'package:test_project1/screens/session_detail.dart';
 
 import 'homescreen_screen.dart';
 
@@ -18,7 +18,8 @@ class _SessionCreateState extends State<SessionCreate> {
   TextEditingController _workoutTitleTextController = TextEditingController();
   TextEditingController _descriptionTextController = TextEditingController();
   DateTime? _selectedDate;
-  TimeOfDay? _selectedTime;
+  TimeOfDay? _selectedStartTime;
+  TimeOfDay? _selectedEndTime;
   TextEditingController _minimumTextController = TextEditingController();
   TextEditingController _maximumTextController = TextEditingController();
   String? _selectedWorkoutType;
@@ -86,7 +87,7 @@ class _SessionCreateState extends State<SessionCreate> {
 
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(30, 50, 20, 0),
+          padding: EdgeInsets.fromLTRB(30, 30, 30, 0),
           child: Column(
             children: <Widget>[
               Padding(
@@ -94,14 +95,15 @@ class _SessionCreateState extends State<SessionCreate> {
                 child: Text(
                   "Create Workout Sessions",
                   style: GoogleFonts.bebasNeue(
-                    fontSize: 45,
+                    fontSize: 50,
                   ),
+                  textAlign: TextAlign.center,
                 ),
               ),
 
               //----------------------------------------------------------------------//
               SizedBox(height: 20),
-              reusableTextFieild(
+              reusableTextField(
                 "Title of Session",
                 Icons.person_outlined,
                 false,
@@ -173,7 +175,7 @@ class _SessionCreateState extends State<SessionCreate> {
               SizedBox(height: 20),
               GestureDetector(
                 onTap: () {
-                  _selectTime(context); // Call the time picker
+                  _selectStartTime(context); // Call the start time picker
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -186,9 +188,41 @@ class _SessionCreateState extends State<SessionCreate> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          _selectedTime == null
-                              ? 'Select Time'
-                              : 'Time: ${_selectedTime!.format(context)}',
+                          _selectedStartTime == null
+                              ? 'Select Start Time'
+                              : 'Start Time: ${_selectedStartTime!.format(context)}',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        Icon(
+                          Icons.access_time,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              SizedBox(height: 20),
+//----------------------------------------------------------------------------------//
+              GestureDetector(
+                onTap: () {
+                  _selectEndTime(context); // Call the end time picker
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.grey[800],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          _selectedEndTime == null
+                              ? 'Select End Time'
+                              : 'End Time: ${_selectedEndTime!.format(context)}',
                           style: TextStyle(color: Colors.white),
                         ),
                         Icon(
@@ -204,7 +238,7 @@ class _SessionCreateState extends State<SessionCreate> {
               //--------------------------------------------------------------------//
 
               SizedBox(height: 20),
-              reusableTextFieild(
+              reusableTextField(
                 "Enter Minimum Number",
                 Icons.mail_lock_outlined,
                 false,
@@ -214,7 +248,7 @@ class _SessionCreateState extends State<SessionCreate> {
               //-----------------------------------------------------------------//
 
               SizedBox(height: 20),
-              reusableTextFieild(
+              reusableTextField(
                 "Enter Maximum Number",
                 Icons.mail_lock_outlined,
                 false,
@@ -223,7 +257,7 @@ class _SessionCreateState extends State<SessionCreate> {
 
               //---------------------------------------------------------------------//
               SizedBox(height: 20),
-              reusableTextFieild(
+              reusableTextField(
                 "Session Description",
                 Icons.mail_lock_outlined,
                 false,
@@ -241,8 +275,11 @@ class _SessionCreateState extends State<SessionCreate> {
                   "Date": _selectedDate != null
                       ? _selectedDate!.toLocal().toString()
                       : null,
-                  "Time": _selectedTime != null
-                      ? _selectedTime!.format(context)
+                  "Start Time": _selectedStartTime != null
+                      ? _selectedStartTime!.format(context)
+                      : null,
+                  "End Time": _selectedEndTime != null
+                      ? _selectedEndTime!.format(context)
                       : null,
                   "Min ppl": _minimumTextController.text,
                   "Max ppl": _maximumTextController.text,
@@ -273,22 +310,35 @@ class _SessionCreateState extends State<SessionCreate> {
       firstDate: DateTime.now(),
       lastDate: DateTime(2100),
     );
-    if (picked != null && picked != _selectedDate) {
+    if (picked != null) {
       setState(() {
         _selectedDate = picked;
       });
     }
   }
-//--------------------------------------------------------------------------//
 
-  Future<void> _selectTime(BuildContext context) async {
+//--------------------------------------------------------------------------//
+  Future<void> _selectStartTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
     );
-    if (picked != null && picked != _selectedTime) {
+    if (picked != null && picked != _selectedStartTime) {
       setState(() {
-        _selectedTime = picked;
+        _selectedStartTime = picked;
+      });
+    }
+  }
+//------------------------------------------------------------------------//
+
+  Future<void> _selectEndTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    if (picked != null && picked != _selectedEndTime) {
+      setState(() {
+        _selectedEndTime = picked;
       });
     }
   }

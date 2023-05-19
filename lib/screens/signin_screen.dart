@@ -18,6 +18,10 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   TextEditingController _passwordTextController = TextEditingController();
   TextEditingController _emailTextController = TextEditingController();
+
+  // Auth instance
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,12 +44,12 @@ class _SignInScreenState extends State<SignInScreen> {
                 SizedBox(
                   height: 30,
                 ),
-                reusableTextFieild(" Enter Email", Icons.mail_lock_outlined,
+                reusableTextField(" Enter Email", Icons.mail_lock_outlined,
                     false, _emailTextController),
                 SizedBox(
                   height: 20,
                 ),
-                reusableTextFieild("Enter Password", Icons.lock_outline, true,
+                reusableTextField("Enter Password", Icons.lock_outline, true,
                     _passwordTextController),
                 SizedBox(
                   height: 3,

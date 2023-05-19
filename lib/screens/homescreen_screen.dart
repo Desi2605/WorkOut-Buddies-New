@@ -1,7 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:test_project1/screens/challenges_view.dart';
+import 'package:test_project1/screens/full_session_detail.dart';
 import 'package:test_project1/screens/session_create.dart';
+import 'package:test_project1/screens/session_detail.dart';
 import 'package:test_project1/screens/signin_screen.dart';
 import 'package:test_project1/utils/workout_tile.dart';
 import 'package:test_project1/utils/workout_type.dart';
@@ -32,10 +35,17 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 20.5),
-            child: Icon(Icons.person),
-          )
+          IconButton(
+            icon: Icon(Icons.logout_outlined),
+            onPressed: () {
+              FirebaseAuth.instance.signOut();
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => SignInScreen()),
+                (route) => false,
+              );
+            },
+          ),
         ],
       ),
 
@@ -56,16 +66,25 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             // Workout Sessions
             ListTile(
-              title: Text('View Workout Sessions'),
-              onTap: () {},
+              title: Text('Workout Sessions'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SessionDetailPage()),
+                );
+              },
             ),
 
             // View Challenges
             ListTile(
-              title: Text('View Workout Challenges'),
-              onTap: () {},
+              title: Text('Workout Challenges'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => challenges()),
+                );
+              },
             ),
-
             //Rewards
             ListTile(
               title: Text('Rewards'),
@@ -112,35 +131,36 @@ class _HomeScreenState extends State<HomeScreen> {
         // List of Workouts
 
         Expanded(
-            child: ListView(
-          scrollDirection: Axis.horizontal,
-          children: [
-            WorkoutTile(
-              workoutImagePath: 'lib/images/img1.jpg',
-              workoutName: 'BADMINTON',
-              workoutDescrip: 'LOCATED IN DSS',
-              workoutDescrip1: 'Test',
-            ),
-            WorkoutTile(
-              workoutImagePath: 'lib/images/img2.jpg',
-              workoutName: 'JOGGIN',
-              workoutDescrip: 'AROUND THE CAMPUS',
-              workoutDescrip1: 'Test',
-            ),
-            WorkoutTile(
-              workoutImagePath: 'lib/images/img3.jpg',
-              workoutName: 'GYM',
-              workoutDescrip: 'LOCATED IN DSS',
-              workoutDescrip1: 'Test',
-            ),
-            WorkoutTile(
-              workoutImagePath: 'lib/images/img3.jpg',
-              workoutName: 'FUTSAL',
-              workoutDescrip: 'LOCATED IN SPORTS ARENA',
-              workoutDescrip1: 'Test',
-            ),
-          ],
-        )),
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+              WorkoutTile(
+                workoutImagePath: 'lib/images/img1.jpg',
+                workoutName: 'BADMINTON',
+                workoutDescrip: 'LOCATED IN DSS',
+                workoutDescrip1: 'Test',
+              ),
+              WorkoutTile(
+                workoutImagePath: 'lib/images/img2.jpg',
+                workoutName: 'JOGGIN',
+                workoutDescrip: 'AROUND THE CAMPUS',
+                workoutDescrip1: 'Test',
+              ),
+              WorkoutTile(
+                workoutImagePath: 'lib/images/img3.jpg',
+                workoutName: 'GYM',
+                workoutDescrip: 'LOCATED IN DSS',
+                workoutDescrip1: 'Test',
+              ),
+              WorkoutTile(
+                workoutImagePath: 'lib/images/img3.jpg',
+                workoutName: 'FUTSAL',
+                workoutDescrip: 'LOCATED IN SPORTS ARENA',
+                workoutDescrip1: 'Test',
+              ),
+            ],
+          ),
+        ),
       ]),
     );
   }

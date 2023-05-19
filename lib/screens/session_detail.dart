@@ -1,9 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:test_project1/reusable_widgets/resusable_widgets.dart';
 import 'package:test_project1/screens/session_create.dart';
+import 'package:test_project1/utils/colors_util.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:test_project1/screens/session_detail.dart';
+import 'package:test_project1/screens/full_session_detail.dart';
 
 class SessionDetailPage extends StatelessWidget {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,10 +31,11 @@ class SessionDetailPage extends StatelessWidget {
           )
         ],
       ),
+
+      //------------------------------------------------------------------//
       drawer: Drawer(
         child: Column(
-          mainAxisAlignment:
-              MainAxisAlignment.center, //Need to Edit this to make it Nice
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ListTile(
               title: Text('Create Workout Session'),
@@ -41,27 +48,27 @@ class SessionDetailPage extends StatelessWidget {
             ),
             // Workout Sessions
             ListTile(
-              title: Text('View Workout Sessions'),
-              onTap: () {},
+              title: Text('Workout Sessions'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SessionDetailPage()),
+                );
+              },
             ),
-
-            // View Challenges
             ListTile(
-              title: Text('View Workout Challenges'),
-              onTap: () {},
-            ),
-
-            //Rewards
-            ListTile(
-              title: Text('Rewards'),
+              title: Text('Joined Sessions'),
               onTap: () {},
             ),
           ],
         ),
       ),
+
       body: StreamBuilder<QuerySnapshot>(
-        stream:
-            FirebaseFirestore.instance.collection('WorkoutSession').snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('WorkoutSession')
+            .orderBy('Date', descending: false)
+            .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -84,7 +91,21 @@ class SessionDetailPage extends StatelessWidget {
                   sessions[index].data() as Map<String, dynamic>;
 
               return ListTile(
-                title: Text(sessionData['Title']),
+                title: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[700],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 18),
+                  child: Text(
+                    sessionData['Title'],
+                    style: GoogleFonts.bebasNeue(
+                      color: Colors.white,
+                      fontSize: 25,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
                 onTap: () {
                   // Handle tapping on a session item
                   Navigator.push(
@@ -99,61 +120,6 @@ class SessionDetailPage extends StatelessWidget {
             },
           );
         },
-      ),
-    );
-  }
-}
-
-class SessionDetail extends StatelessWidget {
-  final Map<String, dynamic> sessionData;
-
-  const SessionDetail({Key? key, required this.sessionData}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Full Details of Session'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              sessionData['Title'],
-              style: GoogleFonts.bebasNeue(
-                fontSize: 35,
-              ),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Type: ${sessionData['Type']}',
-              style: TextStyle(fontSize: 16),
-            ),
-            Text(
-              'Date: ${sessionData['Date']}',
-              style: TextStyle(fontSize: 16),
-            ),
-            Text(
-              'Time: ${sessionData['Time']}',
-              style: TextStyle(fontSize: 16),
-            ),
-            Text(
-              'Min People: ${sessionData['Min ppl'] ?? ''}',
-              style: TextStyle(fontSize: 16),
-            ),
-            Text(
-              'Max People: ${sessionData['Max ppl'] ?? ''}',
-              style: TextStyle(fontSize: 16),
-            ),
-            Text(
-              'Description: ${sessionData['Description'] ?? ''}',
-              style: TextStyle(fontSize: 16),
-            ),
-            // Display other session details as desired
-          ],
-        ),
       ),
     );
   }
