@@ -1,14 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:test_project1/reusable_widgets/resusable_widgets.dart';
-import 'package:test_project1/screens/joined_session.dart';
-import 'package:test_project1/screens/session_create.dart';
-import 'package:test_project1/utils/colors_util.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:test_project1/screens/homescreen_screen.dart';
 import 'package:test_project1/screens/session_detail.dart';
-import 'package:test_project1/screens/full_session_detail.dart';
 
-class SessionDetailPage extends StatelessWidget {
+import 'full_challenge_detail.dart';
+
+class ChallengeDetailPage extends StatelessWidget {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -39,11 +36,11 @@ class SessionDetailPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ListTile(
-              title: Text('Create Workout Session'),
+              title: Text('Homepage'),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SessionCreate()),
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
                 );
               },
             ),
@@ -57,23 +54,14 @@ class SessionDetailPage extends StatelessWidget {
                 );
               },
             ),
-            ListTile(
-              title: Text('Joined Sessions'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => JoinedDetailPage()),
-                );
-              },
-            ),
           ],
         ),
       ),
 
-      body: StreamBuilder<QuerySnapshot>(
+      body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: FirebaseFirestore.instance
-            .collection('WorkoutSession')
-            .orderBy('Date', descending: false)
+            .collection('WorkoutChallenges')
+            .orderBy('startDate', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -93,8 +81,9 @@ class SessionDetailPage extends StatelessWidget {
           return ListView.builder(
             itemCount: sessions.length,
             itemBuilder: (context, index) {
-              final sessionData =
-                  sessions[index].data() as Map<String, dynamic>;
+              final sessionData = sessions[index].data();
+
+              final title = sessionData['title'];
 
               return ListTile(
                 title: Container(
@@ -104,8 +93,8 @@ class SessionDetailPage extends StatelessWidget {
                   ),
                   padding: EdgeInsets.symmetric(vertical: 20, horizontal: 18),
                   child: Text(
-                    sessionData['Title'],
-                    style: GoogleFonts.bebasNeue(
+                    title,
+                    style: TextStyle(
                       color: Colors.white,
                       fontSize: 25,
                     ),
@@ -113,12 +102,11 @@ class SessionDetailPage extends StatelessWidget {
                   ),
                 ),
                 onTap: () {
-                  // Handle tapping on a session item
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                          SessionDetail(sessionData: sessionData),
+                          ChallengeDetail(sessionData: sessionData),
                     ),
                   );
                 },

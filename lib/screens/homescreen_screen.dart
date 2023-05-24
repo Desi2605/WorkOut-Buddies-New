@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:test_project1/screens/challenges_view.dart';
+import 'package:test_project1/screens/challenge_detail.dart';
 import 'package:test_project1/screens/full_session_detail.dart';
 import 'package:test_project1/screens/session_create.dart';
 import 'package:test_project1/screens/session_detail.dart';
@@ -81,13 +81,14 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => challenges()),
+                  MaterialPageRoute(
+                      builder: (context) => ChallengeDetailPage()),
                 );
               },
             ),
             //Rewards
             ListTile(
-              title: Text('Rewards'),
+              title: Text('Contact Us'),
               onTap: () {},
             ),
           ],
@@ -101,9 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25.0),
           child: Text("Choose the WorkOut that you prefer",
-              style: GoogleFonts.bebasNeue(
-                fontSize: 45,
-              )),
+              style: GoogleFonts.bebasNeue(fontSize: 45, color: Colors.white)),
         ),
         SizedBox(height: 25),
 
@@ -120,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 borderSide: BorderSide(color: Colors.grey.shade600),
               ),
               enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey.shade600),
+                borderSide: BorderSide(color: Colors.orange),
               ),
             ),
           ),
@@ -142,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               WorkoutTile(
                 workoutImagePath: 'lib/images/img2.jpg',
-                workoutName: 'JOGGIN',
+                workoutName: 'JOGGING',
                 workoutDescrip: 'AROUND THE CAMPUS',
                 workoutDescrip1: 'Test',
               ),
@@ -155,6 +154,36 @@ class _HomeScreenState extends State<HomeScreen> {
               WorkoutTile(
                 workoutImagePath: 'lib/images/img3.jpg',
                 workoutName: 'FUTSAL',
+                workoutDescrip: 'LOCATED IN SPORTS ARENA',
+                workoutDescrip1: 'Test',
+              ),
+              WorkoutTile(
+                workoutImagePath: 'lib/images/img3.jpg',
+                workoutName: 'VOLLEYBALL',
+                workoutDescrip: 'LOCATED IN SPORTS ARENA',
+                workoutDescrip1: 'Test',
+              ),
+              WorkoutTile(
+                workoutImagePath: 'lib/images/img3.jpg',
+                workoutName: 'TENNIS',
+                workoutDescrip: 'LOCATED IN SPORTS ARENA',
+                workoutDescrip1: 'Test',
+              ),
+              WorkoutTile(
+                workoutImagePath: 'lib/images/img3.jpg',
+                workoutName: 'BASKETBALL',
+                workoutDescrip: 'LOCATED IN SPORTS ARENA',
+                workoutDescrip1: 'Test',
+              ),
+              WorkoutTile(
+                workoutImagePath: 'lib/images/img3.jpg',
+                workoutName: 'SWIMMING',
+                workoutDescrip: 'LOCATED IN SPORTS ARENA',
+                workoutDescrip1: 'Test',
+              ),
+              WorkoutTile(
+                workoutImagePath: 'lib/images/img3.jpg',
+                workoutName: 'FOOTBALL',
                 workoutDescrip: 'LOCATED IN SPORTS ARENA',
                 workoutDescrip1: 'Test',
               ),

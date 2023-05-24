@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "91225248129",
-    "project_id": "fyp-example-a350f",
-    "storage_bucket": "fyp-example-a350f.appspot.com"
+    "project_number": "559697246223",
+    "project_id": "uniten-workout-buddies",
+    "storage_bucket": "uniten-workout-buddies.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:91225248129:android:93cde9df05f3a82cc69880",
+        "mobilesdk_app_id": "1:559697246223:android:a96dbf1cfec94458190b7a",
         "android_client_info": {
           "package_name": "com.example.test_project1"
         }
       },
       "oauth_client": [
         {
-          "client_id": "91225248129-14eh1goajrdcdn5gespnbrmaakv59d4k.apps.googleusercontent.com",
+          "client_id": "559697246223-ukilmluj2c0b1bc8b482trngk6tvod0a.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDblEJ21bOgTrUFUv0GHfYjJUI2oEL_3yg"
+          "current_key": "AIzaSyAgmuRjHKCT-cNEOg5q1zx6yUve7HdmVCY"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "91225248129-14eh1goajrdcdn5gespnbrmaakv59d4k.apps.googleusercontent.com",
+              "client_id": "559697246223-ukilmluj2c0b1bc8b482trngk6tvod0a.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

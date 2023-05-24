@@ -21,14 +21,17 @@ class SessionDetail extends StatelessWidget {
       );
     }
 
-    String sessionTitle = sessionData!['Title'] ?? 'No Title';
-    String sessionType = sessionData!['Type'] ?? 'No Type';
-    String sessionDate = sessionData!['Date'] ?? 'No Date';
-    String sessionStartTime = sessionData!['Start Time'] ?? 'No Start Time';
-    String sessionEndTime = sessionData!['End Time'] ?? 'No End Time';
-    String minPeople = sessionData!['Min ppl']?.toString() ?? 'No Min People';
-    String maxPeople = sessionData!['Max ppl']?.toString() ?? 'No Max People';
-    String description = sessionData!['Description'] ?? 'No Description';
+    String sessionTitle = sessionData!['Title'] as String? ?? 'No Title';
+    String sessionType = sessionData!['Type'] as String? ?? 'No Type';
+    String sessionDate = sessionData!['Date'] as String? ?? 'No Date';
+    String sessionStartTime =
+        sessionData!['Start Time'] as String? ?? 'No Start Time';
+    String sessionEndTime =
+        sessionData!['End Time'] as String? ?? 'No End Time';
+    String maxPeople =
+        sessionData!['Maximum Participants']?.toString() ?? 'No Max People';
+    String description =
+        sessionData!['Description'] as String? ?? 'No Description';
 
     return Scaffold(
       appBar: AppBar(
@@ -67,11 +70,6 @@ class SessionDetail extends StatelessWidget {
             ),
             SizedBox(height: 20),
             Text(
-              'Min People: $minPeople',
-              style: GoogleFonts.bebasNeue(fontSize: 20),
-            ),
-            SizedBox(height: 20),
-            Text(
               'Max People: $maxPeople',
               style: GoogleFonts.bebasNeue(fontSize: 20),
             ),
@@ -89,20 +87,12 @@ class SessionDetail extends StatelessWidget {
                 User? user = auth.currentUser;
 
                 if (user != null) {
-                  String sessionId = sessionData!['SessionId'];
-                  String displayName = user.displayName ?? '';
-                  String firstName;
+                  String sessionId = sessionData!['SessionId'] as String? ?? '';
 
-                  if (displayName.isNotEmpty) {
-                    firstName =
-                        displayName.split(' ')[0]; // Extract the first name
-                  } else {
-                    firstName = user.email!.split(
-                        '@')[0]; // Use the email address as the first name
-                  }
+                  String firstName = await fetchUserFirstName(user.uid!);
 
                   if (firstName.isNotEmpty) {
-                    joinSession(sessionId, firstName);
+                    joinSession(sessionId, firstName, maxPeople, context);
                   } else {
                     print('User does not have a valid first name');
                   }
@@ -118,22 +108,91 @@ class SessionDetail extends StatelessWidget {
     );
   }
 
-  void joinSession(String sessionId, String userFirstName) {
+  Future<String> fetchUserFirstName(String uid) async {
+    String firstName = '';
+
+    try {
+      DocumentSnapshot snapshot =
+          await FirebaseFirestore.instance.collection('Users').doc(uid).get();
+
+      if (snapshot.exists) {
+        final userData = snapshot.data() as Map<String, dynamic>;
+        firstName = userData['Firstname'] as String? ?? '';
+      } else {
+        print('User document does not exist');
+      }
+    } catch (error) {
+      print('Error retrieving user document: $error');
+    }
+
+    return firstName;
+  }
+
+  void joinSession(String sessionId, String firstName, String maxPeople,
+      BuildContext context) {
     FirebaseFirestore.instance
         .collection('WorkoutSession')
         .where('SessionId', isEqualTo: sessionId)
         .get()
         .then((snapshot) {
       if (snapshot.docs.isNotEmpty) {
-        final sessionDocumentId = snapshot.docs[0].id;
+        final sessionDocument = snapshot.docs[0];
+        final sessionData = sessionDocument.data() as Map<String, dynamic>;
+        final participants = sessionData['participants'] as List<dynamic>?;
+        final sessionStatus = sessionData['SessionStatus'] as String?;
+
+        if (sessionStatus == 'Disabled') {
+          // Session is disabled, show a snackbar message
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                  'Sorry, the session is currently disabled due to some issues.'),
+              duration: Duration(seconds: 3),
+            ),
+          );
+          return;
+        }
+
+        if (participants != null &&
+            participants.length >= int.parse(maxPeople)) {
+          // Session is full, show a snackbar message
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Sorry, the session is already full.'),
+              duration: Duration(seconds: 3),
+            ),
+          );
+          return;
+        }
+
+        final sessionDocumentId = sessionDocument.id;
 
         FirebaseFirestore.instance
             .collection('WorkoutSession')
             .doc(sessionDocumentId)
             .update({
-          'participants': FieldValue.arrayUnion([userFirstName])
+          'participants': FieldValue.arrayUnion([firstName])
         }).then((_) {
           print('Successfully joined the session.');
+
+          // Store the session ID in the user's document
+          FirebaseAuth auth = FirebaseAuth.instance;
+          User? user = auth.currentUser;
+          if (user != null) {
+            FirebaseFirestore.instance
+                .collection('Users')
+                .doc(user.uid)
+                .update({
+              'JoinedSessions': FieldValue.arrayUnion([sessionId])
+            }).then((_) {
+              print('Session ID stored in the user document.');
+            }).catchError((error) {
+              print('Error updating user document: $error');
+            });
+          } else {
+            print('User not logged in');
+          }
+
           // Add any additional logic you want to execute after joining the session
         }).catchError((error) {
           print('Error updating session participants: $error');

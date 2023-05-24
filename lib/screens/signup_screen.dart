@@ -91,46 +91,56 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     height: 20,
                   ),
                   FirebaseButtons(context, "SIGN UP", () {
-                    bool isformvalid = formsignup.currentState!.validate();
-                    isformvalid
-                        ? FirebaseAuth.instance
-                            .createUserWithEmailAndPassword(
-                                email: _emailTextController.text,
-                                password: _passwordTextController.text)
-                            .then((value) {
-                            FirebaseFirestore.instance
-                                .collection("Users")
-                                .doc(value.user!.uid)
-                                .set({
-                              "Firstname": _firstnameTextController.text,
-                              "Lastname": _lastnameTextController.text,
-                              "Username": _userNameTextController.text,
-                              "Email": _emailTextController.text,
-                              "Password": _passwordTextController.text
-                            });
-                            print("Account Has Been Created");
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => HomeScreen()));
-                          }).onError((error, stackTrace) {
-                            print("Error ${error.toString()}");
-                          })
-                        : showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: Text("Error"),
-                              content: Text(
-                                  "Please use Uniten Student Email"), // Error Message for Email
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: Text("OK"),
-                                ),
-                              ],
+                    bool isFormValid = formsignup.currentState!.validate();
+                    if (isFormValid) {
+                      FirebaseAuth.instance
+                          .createUserWithEmailAndPassword(
+                              email: _emailTextController.text,
+                              password: _passwordTextController.text)
+                          .then((value) {
+                        String userId = value.user!.uid; // Get the user ID
+                        FirebaseFirestore.instance
+                            .collection("Users")
+                            .doc(userId)
+                            .set({
+                          "UserId": userId, // Store the user ID
+                          "Firstname": _firstnameTextController.text,
+                          "Lastname": _lastnameTextController.text,
+                          "Username": _userNameTextController.text,
+                          "Email": _emailTextController.text,
+                          "Password": _passwordTextController.text,
+                          "AccountStatus":
+                              "Active", // Set the account status as "active"
+                        }).then((_) {
+                          print("Account Has Been Created");
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => HomeScreen(),
                             ),
                           );
-                  })
+                        }).catchError((error) {
+                          print("Error ${error.toString()}");
+                        });
+                      }).catchError((error) {
+                        print("Error ${error.toString()}");
+                      });
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text("Error"),
+                          content: Text("Please use Uniten Student Email"),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text("OK"),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  }),
                 ],
               ),
             ),

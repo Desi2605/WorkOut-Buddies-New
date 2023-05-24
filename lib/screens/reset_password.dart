@@ -15,6 +15,50 @@ class ResetPassword extends StatefulWidget {
 
 class _ResetPasswordState extends State<ResetPassword> {
   TextEditingController _emailTextController = TextEditingController();
+
+  void _showSuccessDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Success'),
+        content: Text('Check your registered email'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showErrorDialog(String errorMessage) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Error'),
+        content: Text(errorMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _resetPassword() {
+    String email = _emailTextController.text;
+
+    FirebaseAuth.instance.sendPasswordResetEmail(email: email).then((value) {
+      _showSuccessDialog();
+      Navigator.of(context).pop();
+    }).catchError((error) {
+      _showErrorDialog(error.toString());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,11 +75,16 @@ class _ResetPasswordState extends State<ResetPassword> {
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
-            gradient: LinearGradient(colors: [
-          hexStringToColor("808080"),
-          hexStringToColor("000000"),
-          hexStringToColor("000000")
-        ], begin: Alignment.topCenter, end: Alignment.bottomLeft)),
+          gradient: LinearGradient(
+            colors: [
+              hexStringToColor("808080"),
+              hexStringToColor("000000"),
+              hexStringToColor("000000"),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomLeft,
+          ),
+        ),
         child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.fromLTRB(30, 200, 20, 0),
@@ -44,16 +93,22 @@ class _ResetPasswordState extends State<ResetPassword> {
                 const SizedBox(
                   height: 20,
                 ),
-                reusableTextField("Enter Email", Icons.mail_lock_outlined,
-                    false, _emailTextController),
+                reusableTextField(
+                  "Enter Email",
+                  Icons.mail_lock_outlined,
+                  false,
+                  _emailTextController,
+                ),
                 const SizedBox(
                   height: 20,
                 ),
-                FirebaseButtons(context, "Reset Password", () {
-                  FirebaseAuth.instance
-                      .sendPasswordResetEmail(email: _emailTextController.text)
-                      .then((value) => Navigator.of(context).pop());
-                })
+                FirebaseButtons(
+                  context,
+                  "Reset Password",
+                  () {
+                    _resetPassword();
+                  },
+                ),
               ],
             ),
           ),

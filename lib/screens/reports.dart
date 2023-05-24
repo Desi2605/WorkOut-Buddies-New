@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:test_project1/reusable_widgets/resusable_widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:test_project1/screens/challenge_detail.dart';
 import 'package:test_project1/screens/session_detail.dart';
 import 'homescreen_screen.dart';
 
@@ -27,12 +28,6 @@ class _SessionCreateState extends State<SessionCreate> {
     'Badminton',
     'Gym',
     'Futsal',
-    'Jogging',
-    'Volleyball',
-    'Tennis',
-    'Basketball',
-    'Swimming',
-    'Football'
   ];
 
   @override
@@ -80,11 +75,19 @@ class _SessionCreateState extends State<SessionCreate> {
             ),
             ListTile(
               title: Text('View Workout Challenges'),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ChallengeDetailPage()),
+                );
+              },
             ),
             ListTile(
               title: Text('Rewards'),
-              onTap: () {},
+              onTap: () {
+                
+              },
             ),
           ],
         ),

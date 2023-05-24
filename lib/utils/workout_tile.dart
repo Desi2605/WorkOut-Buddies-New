@@ -18,7 +18,7 @@ class WorkoutTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(left: 25.0, bottom: 25),
       child: Container(
-        padding: EdgeInsets.all(12),
+        padding: EdgeInsets.all(15),
         width: 250,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),

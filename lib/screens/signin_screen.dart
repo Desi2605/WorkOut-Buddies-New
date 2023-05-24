@@ -6,7 +6,7 @@ import 'package:test_project1/screens/homescreen_screen.dart';
 import 'package:test_project1/screens/reset_password.dart';
 import 'package:test_project1/screens/signup_screen.dart';
 import 'package:test_project1/utils/colors_util.dart';
-import 'package:test_project1/screens/session_create.dart';
+import 'dart:async';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
@@ -19,8 +19,90 @@ class _SignInScreenState extends State<SignInScreen> {
   TextEditingController _passwordTextController = TextEditingController();
   TextEditingController _emailTextController = TextEditingController();
 
-  // Auth instance
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  late StreamSubscription<User?> _authStateChangesSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _authStateChangesSubscription =
+        _auth.authStateChanges().listen((User? user) {
+      // Handle authentication state changes here
+      // You can perform custom logic based on the user's authentication state
+    });
+  }
+
+  @override
+  void dispose() {
+    _authStateChangesSubscription.cancel();
+    _passwordTextController.dispose();
+    _emailTextController.dispose();
+    super.dispose();
+  }
+
+  Future<String?> checkAccountStatus(String email) async {
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('Users')
+        .where('Email', isEqualTo: email)
+        .limit(1)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      final user = querySnapshot.docs.first;
+      final accountStatus = user['AccountStatus'];
+      return accountStatus;
+    }
+
+    return null;
+  }
+
+  Future<void> signIn(String email, String password) async {
+    final accountStatus = await checkAccountStatus(email);
+
+    if (accountStatus == 'Disabled') {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Account Disabled'),
+          content: Text('Your account has been disabled.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    try {
+      await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
+    } catch (error) {
+      print('Error signing in: $error');
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text('Invalid email or password.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,66 +111,54 @@ class _SignInScreenState extends State<SignInScreen> {
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
-            gradient: LinearGradient(colors: [
-          hexStringToColor("808080"),
-          hexStringToColor("000000"),
-          hexStringToColor("000000")
-        ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+          gradient: LinearGradient(
+            colors: [
+              hexStringToColor("808080"),
+              hexStringToColor("000000"),
+              hexStringToColor("000000"),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
         child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.fromLTRB(
-                20, MediaQuery.of(context).size.height * 0.2, 20, 0),
+              20,
+              MediaQuery.of(context).size.height * 0.2,
+              20,
+              0,
+            ),
             child: Column(
               children: <Widget>[
                 logoWidget("assets/images/logo1.png"),
-                SizedBox(
-                  height: 30,
+                SizedBox(height: 30),
+                reusableTextField(
+                  " Enter Email",
+                  Icons.mail_lock_outlined,
+                  false,
+                  _emailTextController,
                 ),
-                reusableTextField(" Enter Email", Icons.mail_lock_outlined,
-                    false, _emailTextController),
-                SizedBox(
-                  height: 20,
+                SizedBox(height: 20),
+                reusableTextField(
+                  "Enter Password",
+                  Icons.lock_outline,
+                  true,
+                  _passwordTextController,
                 ),
-                reusableTextField("Enter Password", Icons.lock_outline, true,
-                    _passwordTextController),
-                SizedBox(
-                  height: 3,
-                ),
+                SizedBox(height: 3),
                 forgetPassword(context),
                 FirebaseButtons(
                   context,
                   "SIGN IN HERE",
                   () {
-                    FirebaseAuth.instance
-                        .signInWithEmailAndPassword(
-                            email: _emailTextController.text,
-                            password: _passwordTextController.text)
-                        .then((value) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => HomeScreen()),
-                      );
-                    }).catchError((error) {
-                      //the handler for error message
-                      print("Error signing in: $error");
-                      // This is for Error Message when wrong email or password
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text("Error"),
-                          content: Text("Invalid email or password."),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text("OK"),
-                            ),
-                          ],
-                        ),
-                      );
-                    });
+                    signIn(
+                      _emailTextController.text,
+                      _passwordTextController.text,
+                    );
                   },
                 ),
-                signUpOption()
+                signUpOption(),
               ],
             ),
           ),
@@ -101,18 +171,22 @@ class _SignInScreenState extends State<SignInScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text("Are you new here?",
-            style: TextStyle(color: Colors.white70)),
+        const Text(
+          "Are you new here?",
+          style: TextStyle(color: Colors.white70),
+        ),
         GestureDetector(
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => SignUpScreen()));
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SignUpScreen()),
+            );
           },
           child: const Text(
             "Sign Up",
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
-        )
+        ),
       ],
     );
   }
@@ -123,13 +197,16 @@ class _SignInScreenState extends State<SignInScreen> {
       height: 35,
       alignment: Alignment.bottomRight,
       child: TextButton(
-          child: Text(
-            "Forgot Password ?",
-            style: TextStyle(color: Colors.white70),
-            textAlign: TextAlign.right,
-          ),
-          onPressed: () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ResetPassword()))),
+        child: Text(
+          "Forgot Password ?",
+          style: TextStyle(color: Colors.white70),
+          textAlign: TextAlign.right,
+        ),
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ResetPassword()),
+        ),
+      ),
     );
   }
 }
