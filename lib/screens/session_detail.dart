@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:test_project1/reusable_widgets/resusable_widgets.dart';
+import 'package:test_project1/screens/created_session.dart';
 import 'package:test_project1/screens/joined_session.dart';
 import 'package:test_project1/screens/session_create.dart';
 import 'package:test_project1/utils/colors_util.dart';
@@ -63,6 +64,15 @@ class SessionDetailPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => JoinedDetailPage()),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('Created Sessions'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CreatedDetailPage()),
                 );
               },
             ),
