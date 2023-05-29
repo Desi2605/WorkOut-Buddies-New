@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class WorkoutTile extends StatelessWidget {
   final String workoutImagePath;
@@ -19,7 +20,7 @@ class WorkoutTile extends StatelessWidget {
       padding: const EdgeInsets.only(left: 25.0, bottom: 25),
       child: Container(
         padding: EdgeInsets.all(15),
-        width: 250,
+        width: 300,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           color: Colors.black54,
@@ -41,14 +42,10 @@ class WorkoutTile extends StatelessWidget {
                 children: [
                   Text(
                     workoutName,
-                    style: TextStyle(fontSize: 18),
+                    style: GoogleFonts.montserrat(fontSize: 20),
                   ),
                   SizedBox(
                     height: 4,
-                  ),
-                  Text(
-                    '2-4 Players',
-                    style: TextStyle(color: Colors.grey[700]),
                   ),
                   Text(
                     workoutDescrip1,
@@ -63,7 +60,7 @@ class WorkoutTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(workoutDescrip),
-                Icon(Icons.stadium),
+                Icon(Icons.push_pin),
               ],
             )
           ],
