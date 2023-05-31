@@ -14,6 +14,10 @@ class JoinedDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final User? user = FirebaseAuth.instance.currentUser;
+    final DocumentReference userDoc =
+        FirebaseFirestore.instance.collection('Users').doc(user!.uid);
+
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.grey[900],
@@ -62,30 +66,41 @@ class JoinedDetailPage extends StatelessWidget {
           ],
         ),
       ),
-      body: FutureBuilder<User?>(
-        future: getCurrentUser(),
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: userDoc.snapshots(),
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            final user = snapshot.data!;
-            final firstName = user.displayName;
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (snapshot.hasData && snapshot.data!.exists) {
+            final List<String> sessionIds =
+                List<String>.from(snapshot.data!.get('JoinedSessions'));
 
-            return StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('WorkoutSession')
-                  .where('participants', arrayContains: firstName)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  final sessions = snapshot.data!.docs;
+            if (sessionIds.isEmpty) {
+              return Center(
+                child: Text('No created sessions found.'),
+              );
+            }
 
-                  return ListView.builder(
-                    itemCount: sessions.length,
-                    itemBuilder: (context, index) {
-                      final sessionData =
-                          sessions[index].data() as Map<String, dynamic>;
+            return ListView.builder(
+              itemCount: sessionIds.length,
+              itemBuilder: (context, index) {
+                final String sessionId = sessionIds[index];
 
-                      final sessionName = sessionData['Title'];
-                      final sessionDescription = sessionData['Description'];
+                return FutureBuilder<DocumentSnapshot>(
+                  future: FirebaseFirestore.instance
+                      .collection('WorkoutSession')
+                      .doc(sessionId)
+                      .get(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator();
+                    }
+                    if (snapshot.hasData && snapshot.data!.exists) {
+                      final DocumentSnapshot sessionSnapshot = snapshot.data!;
+                      final String sessionName = sessionSnapshot.get('Title');
 
                       return ListTile(
                         title: Container(
@@ -110,38 +125,28 @@ class JoinedDetailPage extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) => JoinSessionDetail(
-                                sessionData: sessionData,
+                                sessionData: sessionSnapshot.data()
+                                    as Map<String, dynamic>,
+                                sessionId:
+                                    sessionId, // Pass the sessionId parameter here
                               ),
                             ),
                           );
                         },
                       );
-                    },
-                  );
-                }
-
-                return Center(
-                  child: CircularProgressIndicator(),
+                    }
+                    return Text('Failed to load session data.');
+                  },
                 );
               },
             );
           }
 
-          if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          }
-
           return Center(
-            child: CircularProgressIndicator(),
+            child: Text('Failed to load created sessions.'),
           );
         },
       ),
     );
-  }
-
-  Future<User?> getCurrentUser() async {
-    return FirebaseAuth.instance.currentUser;
   }
 }

@@ -3,15 +3,55 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class ChallengeDetail extends StatelessWidget {
+class ChallengeDetail extends StatefulWidget {
   final Map<String, dynamic>? sessionData;
 
   const ChallengeDetail({Key? key, required this.sessionData})
       : super(key: key);
 
   @override
+  _ChallengeDetailState createState() => _ChallengeDetailState();
+}
+
+class _ChallengeDetailState extends State<ChallengeDetail> {
+  String firstName = '';
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserFirstName();
+  }
+
+  Future<void> fetchUserFirstName() async {
+    try {
+      FirebaseAuth auth = FirebaseAuth.instance;
+      User? user = auth.currentUser;
+
+      if (user != null) {
+        DocumentSnapshot snapshot = await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(user.uid)
+            .get();
+
+        if (snapshot.exists) {
+          final userData = snapshot.data() as Map<String, dynamic>;
+          setState(() {
+            firstName = userData['Firstname'] as String? ?? '';
+          });
+        } else {
+          print('User document does not exist');
+        }
+      } else {
+        print('User not logged in');
+      }
+    } catch (error) {
+      print('Error retrieving user document: $error');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (sessionData == null) {
+    if (widget.sessionData == null) {
       return Scaffold(
         appBar: AppBar(
           title: Text('Full Challenge Details'),
@@ -22,17 +62,18 @@ class ChallengeDetail extends StatelessWidget {
       );
     }
 
-    String challengeTitle = sessionData!['title'] as String? ?? 'No Title';
-    String challengeType = sessionData!['type'] as String? ?? 'No Type';
-    Timestamp? challengeStartDate = sessionData!['startDate'] as Timestamp?;
-    Timestamp? challengeEndDate = sessionData!['endDate'] as Timestamp?;
+    String challengeTitle =
+        widget.sessionData!['title'] as String? ?? 'No Title';
+    String challengeType = widget.sessionData!['type'] as String? ?? 'No Type';
+    Timestamp? challengeStartDate =
+        widget.sessionData!['startDate'] as Timestamp?;
+    Timestamp? challengeEndDate = widget.sessionData!['endDate'] as Timestamp?;
     String description =
-        sessionData!['description'] as String? ?? 'No Description';
+        widget.sessionData!['description'] as String? ?? 'No Description';
 
     String formattedStartDate = challengeStartDate != null
         ? challengeStartDate.toDate().toString()
         : 'No Start Time';
-
     String formattedEndDate = challengeEndDate != null
         ? challengeEndDate.toDate().toString()
         : 'No End Time';
@@ -77,8 +118,7 @@ class ChallengeDetail extends StatelessWidget {
             SizedBox(height: 50),
             ElevatedButton(
               onPressed: () {
-                // Handle joining the session
-                joinSession(context);
+                joinSession();
               },
               child: Text('Join Session'),
             ),
@@ -88,55 +128,52 @@ class ChallengeDetail extends StatelessWidget {
     );
   }
 
-  // Function to handle joining the session
-  void joinSession(BuildContext context) async {
-    User? currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser != null) {
-      String userId = currentUser.uid;
+  void joinSession() async {
+    try {
+      FirebaseAuth auth = FirebaseAuth.instance;
+      User? user = auth.currentUser;
 
-      // Retrieve the logged-in user's first name from the "Users" collection
-      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(userId)
-          .get();
-      if (userSnapshot.exists) {
-        String firstName = userSnapshot['Firstname'] as String? ?? '';
+      if (user != null) {
+        String email = user.email ?? '';
 
-        // Get the session ID from the sessionData
-        String? sessionId = sessionData?['sessionId'] as String?;
-
-        if (sessionId != null) {
-          // Update the "WorkoutChallenges" document with the user's first name
-          DocumentReference sessionRef = FirebaseFirestore.instance
+        if (email.isNotEmpty) {
+          QuerySnapshot sessionSnapshot = await FirebaseFirestore.instance
               .collection('WorkoutChallenges')
-              .doc(sessionId);
+              .where('Challengeid',
+                  isEqualTo: widget.sessionData!['Challengeid'])
+              .limit(1)
+              .get();
 
-          await FirebaseFirestore.instance.runTransaction((transaction) async {
-            DocumentSnapshot sessionSnapshot =
-                await transaction.get(sessionRef);
+          if (sessionSnapshot.docs.isNotEmpty) {
+            DocumentReference sessionRef = sessionSnapshot.docs[0].reference;
 
-            if (sessionSnapshot.exists) {
-              List<dynamic> participants =
-                  sessionSnapshot['participants'] as List<dynamic>? ?? [];
-              participants.add(firstName);
+            await sessionRef.update({
+              'participants': FieldValue.arrayUnion([email])
+            });
 
-              transaction.update(sessionRef, {'participants': participants});
-            }
-          });
+            await FirebaseFirestore.instance
+                .collection('Users')
+                .doc(user.uid)
+                .update({
+              'JoinedChallenges': FieldValue.arrayUnion([sessionRef.id])
+            });
 
-          // Show a snackbar indicating successful join
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('You have joined the challenge!'),
-            ),
-          );
-
-          // TODO: Add any additional logic or navigate to a new screen after joining the session
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Successfully joined the session.'),
+              ),
+            );
+          } else {
+            print('Session document not found');
+          }
         } else {
-          // Handle the case when the session ID is null
-          print('Session ID is null');
+          print('User does not have a valid email');
         }
+      } else {
+        print('User not logged in');
       }
+    } catch (error) {
+      print('Error joining session: $error');
     }
   }
 }

@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class JoinSessionDetail extends StatelessWidget {
   final Map<String, dynamic>? sessionData;
+  final String sessionId; // Add this property
 
-  const JoinSessionDetail({Key? key, required this.sessionData})
-      : super(key: key);
+  const JoinSessionDetail({
+    Key? key,
+    required this.sessionData,
+    required this.sessionId,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     if (sessionData == null) {
       return Scaffold(
         appBar: AppBar(
-          title: Text('Full Details of Session'),
+          title: Text('Joined Session Details'),
         ),
         body: Center(
           child: Text('Session data is unavailable.'),
@@ -29,15 +31,23 @@ class JoinSessionDetail extends StatelessWidget {
         sessionData!['Start Time'] as String? ?? 'No Start Time';
     String sessionEndTime =
         sessionData!['End Time'] as String? ?? 'No End Time';
-    int maxPeople = sessionData!['Maximum Participants'] ?? 0;
-    String maxPeopleString =
-        maxPeople != 0 ? maxPeople.toString() : 'No Max People';
+    String maxPeople =
+        sessionData!['Maximum Participants']?.toString() ?? 'No Max People';
     String description =
         sessionData!['Description'] as String? ?? 'No Description';
 
+    String Participants = '';
+
+    if (sessionData!['participants'] != null) {
+      final participants = sessionData!['participants'] as List<dynamic>;
+      Participants = participants.join(', ');
+    } else {
+      Participants = 'No Participants';
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Full Details of Session'),
+        title: Text('Joined Session Details'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -80,6 +90,14 @@ class JoinSessionDetail extends StatelessWidget {
               'Description: $description',
               style: GoogleFonts.bebasNeue(fontSize: 20),
             ),
+            SizedBox(height: 20),
+            Text(
+              'Participants: $Participants',
+              style: GoogleFonts.bebasNeue(fontSize: 20),
+            ),
+            // Display other session details as desired
+
+            SizedBox(height: 50),
           ],
         ),
       ),

@@ -46,9 +46,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
             gradient: LinearGradient(colors: [
-          hexStringToColor("808080"),
-          hexStringToColor("000000"),
-          hexStringToColor("000000")
+          hexStringToColor("#00008B"),
+          hexStringToColor("#5D3FD3"),
+          hexStringToColor("#FF5733"),
         ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
         child: Form(
           key: formsignup,
@@ -109,6 +109,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           "Username": _userNameTextController.text,
                           "Email": _emailTextController.text,
                           "Password": _passwordTextController.text,
+                          "CreatedSession": "",
+                          "JoinedSessions": "",
                           "AccountStatus":
                               "Active", // Set the account status as "active"
                         }).then((_) {

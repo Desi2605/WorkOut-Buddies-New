@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:test_project1/reusable_widgets/resusable_widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:test_project1/screens/View%20Workouts/session_detail.dart';
+import 'package:test_project1/screens/Workout%20Challeng/challenge_detail.dart';
 import '../Homescreen/homescreen_screen.dart';
 
 class SessionCreate extends StatefulWidget {
@@ -36,7 +37,19 @@ class _SessionCreateState extends State<SessionCreate> {
     'Football'
   ];
 
-  List<String> Mintime = ['2', '4', '6', '8', '10', '12'];
+  List<String> Mintime = [
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    '11',
+    '12'
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +96,13 @@ class _SessionCreateState extends State<SessionCreate> {
             ),
             ListTile(
               title: Text('View Workout Challenges'),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ChallengeDetailPage()),
+                );
+              },
             ),
             ListTile(
               title: Text('Rewards'),
@@ -273,6 +292,7 @@ class _SessionCreateState extends State<SessionCreate> {
                 onChanged: (String? newValue) {
                   setState(() {
                     _selectedMinTime = newValue;
+                    _maximumTextController.text = newValue ?? '';
                   });
                 },
                 items: Mintime.map<DropdownMenuItem<String>>(
@@ -312,7 +332,10 @@ class _SessionCreateState extends State<SessionCreate> {
                       ? _selectedEndTime!.format(context)
                       : null,
                   "Maximum Participants":
-                      int.parse(_maximumTextController.text),
+                      int.tryParse(_maximumTextController.text) ?? 0,
+                  "participants": [
+                    FirebaseAuth.instance.currentUser!.uid
+                  ] // Add owner's ID to participants
                 });
 
                 // Get the current user's document reference

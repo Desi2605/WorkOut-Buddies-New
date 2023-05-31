@@ -175,7 +175,7 @@ class SessionDetail extends StatelessWidget {
         }).then((_) {
           print('Successfully joined the session.');
 
-          // Store the session ID in the user's document
+          // Store the session document ID in the user's document
           FirebaseAuth auth = FirebaseAuth.instance;
           User? user = auth.currentUser;
           if (user != null) {
@@ -183,9 +183,9 @@ class SessionDetail extends StatelessWidget {
                 .collection('Users')
                 .doc(user.uid)
                 .update({
-              'JoinedSessions': FieldValue.arrayUnion([sessionId])
+              'JoinedSessions': FieldValue.arrayUnion([sessionDocumentId])
             }).then((_) {
-              print('Session ID stored in the user document.');
+              print('Session document ID stored in the user document.');
             }).catchError((error) {
               print('Error updating user document: $error');
             });

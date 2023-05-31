@@ -1,15 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class CreateSessionDetail extends StatelessWidget {
+class CreateSessionDetail extends StatefulWidget {
   final Map<String, dynamic>? sessionData;
+  final String sessionId; // Add this property
 
-  const CreateSessionDetail({Key? key, required this.sessionData})
-      : super(key: key);
+  const CreateSessionDetail({
+    Key? key,
+    required this.sessionData,
+    required this.sessionId,
+  }) : super(key: key);
+
+  @override
+  _CreateSessionDetailState createState() => _CreateSessionDetailState();
+}
+
+class _CreateSessionDetailState extends State<CreateSessionDetail> {
+  bool _isExpandedParticipants = false;
+  bool _isExpandedDescription = false;
+  bool _isExpandedMaxPeople = false;
+  bool _isExpandedTime = false;
 
   @override
   Widget build(BuildContext context) {
-    if (sessionData == null) {
+    if (widget.sessionData == null) {
       return Scaffold(
         appBar: AppBar(
           title: Text('Created Session Details'),
@@ -20,83 +34,167 @@ class CreateSessionDetail extends StatelessWidget {
       );
     }
 
-    String sessionTitle = sessionData!['Title'] as String? ?? 'No Title';
-    String sessionType = sessionData!['Type'] as String? ?? 'No Type';
-    String sessionDate = sessionData!['Date'] as String? ?? 'No Date';
+    String sessionTitle = widget.sessionData!['Title'] as String? ?? 'No Title';
+    String sessionType = widget.sessionData!['Type'] as String? ?? 'No Type';
+    String sessionDate = widget.sessionData!['Date'] as String? ?? 'No Date';
     String sessionStartTime =
-        sessionData!['Start Time'] as String? ?? 'No Start Time';
+        widget.sessionData!['Start Time'] as String? ?? 'No Start Time';
     String sessionEndTime =
-        sessionData!['End Time'] as String? ?? 'No End Time';
+        widget.sessionData!['End Time'] as String? ?? 'No End Time';
     String maxPeople =
-        sessionData!['Maximum Participants']?.toString() ?? 'No Max People';
+        widget.sessionData!['Maximum Participants']?.toString() ??
+            'No Max People';
     String description =
-        sessionData!['Description'] as String? ?? 'No Description';
+        widget.sessionData!['Description'] as String? ?? 'No Description';
 
-    String Participants = '';
+    String participants = '';
 
-    if (sessionData!['participants'] != null) {
-      final participants = sessionData!['participants'] as List<dynamic>;
-      Participants = participants.join(', ');
+    if (widget.sessionData!['participants'] != null) {
+      final participantList =
+          widget.sessionData!['participants'] as List<dynamic>;
+      participants = participantList.join(', ');
     } else {
-      Participants = 'No Participants';
+      participants = 'No Participants';
     }
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Created Session Detail'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: _handleEditButtonPressed,
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              sessionTitle,
-              style: GoogleFonts.bebasNeue(
-                fontSize: 35,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                sessionTitle,
+                style: GoogleFonts.bebasNeue(
+                  fontSize: 35,
+                ),
               ),
-            ),
-            SizedBox(height: 25),
-            Text(
-              ' Workout Type: $sessionType',
-              style: GoogleFonts.bebasNeue(fontSize: 20),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Date: $sessionDate',
-              style: GoogleFonts.bebasNeue(fontSize: 20),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Start Time: $sessionStartTime',
-              style: GoogleFonts.bebasNeue(fontSize: 20),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'End Time: $sessionEndTime',
-              style: GoogleFonts.bebasNeue(fontSize: 20),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Max People: $maxPeople',
-              style: GoogleFonts.bebasNeue(fontSize: 20),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Description: $description',
-              style: GoogleFonts.bebasNeue(fontSize: 20),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Participants: $Participants',
-              style: GoogleFonts.bebasNeue(fontSize: 20),
-            ),
-            // Display other session details as desired
-
-            SizedBox(height: 50),
-          ],
+              SizedBox(height: 25),
+              Text(
+                'Workout Type: $sessionType',
+                style: GoogleFonts.bebasNeue(fontSize: 20),
+              ),
+              SizedBox(height: 20),
+              Text(
+                'Date: $sessionDate',
+                style: GoogleFonts.bebasNeue(fontSize: 20),
+              ),
+              SizedBox(height: 20),
+              ExpansionPanelList(
+                elevation: 1,
+                expandedHeaderPadding: EdgeInsets.all(0),
+                expansionCallback: (int index, bool isExpanded) {
+                  setState(() {
+                    if (index == 0) {
+                      _isExpandedTime = !isExpanded;
+                    } else if (index == 1) {
+                      _isExpandedMaxPeople = !isExpanded;
+                    } else if (index == 2) {
+                      _isExpandedDescription = !isExpanded;
+                    } else if (index == 3) {
+                      _isExpandedParticipants = !isExpanded;
+                    }
+                  });
+                },
+                children: [
+                  ExpansionPanel(
+                    headerBuilder: (BuildContext context, bool isExpanded) {
+                      return ListTile(
+                        title: Text(
+                          'Time',
+                          style: GoogleFonts.bebasNeue(fontSize: 20),
+                        ),
+                      );
+                    },
+                    body: Column(
+                      children: [
+                        ListTile(
+                          title: Text(
+                            'Start Time: $sessionStartTime',
+                            style: GoogleFonts.bebasNeue(fontSize: 16),
+                          ),
+                        ),
+                        ListTile(
+                          title: Text(
+                            'End Time: $sessionEndTime',
+                            style: GoogleFonts.bebasNeue(fontSize: 16),
+                          ),
+                        ),
+                      ],
+                    ),
+                    isExpanded: _isExpandedTime,
+                  ),
+                  ExpansionPanel(
+                    headerBuilder: (BuildContext context, bool isExpanded) {
+                      return ListTile(
+                        title: Text(
+                          'Max People',
+                          style: GoogleFonts.bebasNeue(fontSize: 20),
+                        ),
+                      );
+                    },
+                    body: ListTile(
+                      title: Text(
+                        maxPeople,
+                        style: GoogleFonts.bebasNeue(fontSize: 16),
+                      ),
+                    ),
+                    isExpanded: _isExpandedMaxPeople,
+                  ),
+                  ExpansionPanel(
+                    headerBuilder: (BuildContext context, bool isExpanded) {
+                      return ListTile(
+                        title: Text(
+                          'Description',
+                          style: GoogleFonts.bebasNeue(fontSize: 20),
+                        ),
+                      );
+                    },
+                    body: ListTile(
+                      title: Text(
+                        description,
+                        style: GoogleFonts.bebasNeue(fontSize: 16),
+                      ),
+                    ),
+                    isExpanded: _isExpandedDescription,
+                  ),
+                  ExpansionPanel(
+                    headerBuilder: (BuildContext context, bool isExpanded) {
+                      return ListTile(
+                        title: Text(
+                          'Participants',
+                          style: GoogleFonts.bebasNeue(fontSize: 20),
+                        ),
+                      );
+                    },
+                    body: ListTile(
+                      title: Text(
+                        participants,
+                        style: GoogleFonts.bebasNeue(fontSize: 16),
+                      ),
+                    ),
+                    isExpanded: _isExpandedParticipants,
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  void _handleEditButtonPressed() {
+    print('Edit button pressed');
   }
 }

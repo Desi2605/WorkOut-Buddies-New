@@ -140,6 +140,8 @@ class CreatedDetailPage extends StatelessWidget {
                               builder: (context) => CreateSessionDetail(
                                 sessionData: sessionSnapshot.data()
                                     as Map<String, dynamic>,
+                                sessionId:
+                                    sessionId, // Pass the sessionId parameter here
                               ),
                             ),
                           );
