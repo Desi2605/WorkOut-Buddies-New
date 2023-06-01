@@ -17,13 +17,14 @@ class ReportDetailed extends StatelessWidget {
     if (sessionData == null) {
       return Scaffold(
         appBar: AppBar(
-          title: Text('Joined Session Details'),
+          title: Text('Report Details'),
         ),
         body: Center(
-          child: Text('Session data is unavailable.'),
+          child: Text('Report data is unavailable.'),
         ),
       );
     }
+
     String reportTitle = sessionData!['Title'] as String? ?? 'No Title';
     String description =
         sessionData!['Description'] as String? ?? 'No Description';
@@ -31,11 +32,14 @@ class ReportDetailed extends StatelessWidget {
     DateTime reportDate =
         reportTimestamp != null ? reportTimestamp.toDate() : DateTime.now();
     String reportStatus =
-        sessionData!['Report Status'] as String? ?? 'No Title';
+        sessionData!['Report Status'] as String? ?? 'No Status';
+
+    Color statusColor =
+        reportStatus == 'Action Taken' ? Colors.green : Colors.red;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Joined Session Details'),
+        title: Text('Report Details'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -61,7 +65,10 @@ class ReportDetailed extends StatelessWidget {
             SizedBox(height: 20),
             Text(
               'Report Status: $reportStatus',
-              style: GoogleFonts.bebasNeue(fontSize: 20),
+              style: GoogleFonts.bebasNeue(
+                fontSize: 20,
+                color: statusColor,
+              ),
             ),
             SizedBox(height: 50),
           ],

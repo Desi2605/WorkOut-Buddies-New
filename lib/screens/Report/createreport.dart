@@ -32,12 +32,6 @@ class _ReportCreateState extends State<ReportCreate> {
             _scaffoldKey.currentState?.openDrawer(); // Open the drawer
           },
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 20.5),
-            child: Icon(Icons.person),
-          )
-        ],
       ),
       drawer: Drawer(
         child: Column(
@@ -52,6 +46,14 @@ class _ReportCreateState extends State<ReportCreate> {
                 );
               },
             ),
+            ListTile(
+                title: Text('Create Reports'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ReportCreate()),
+                  );
+                }),
             ListTile(
                 title: Text('View Reports'),
                 onTap: () {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:test_project1/screens/Created%20Session/full_details_created.dart';
 import 'package:test_project1/screens/Joined%20Session/joined_Session_display.dart';
 import 'package:test_project1/screens/Create%20Workout/session_create.dart';
@@ -136,10 +137,9 @@ class CreatedDetailPage extends StatelessWidget {
                               vertical: 20, horizontal: 18),
                           child: Text(
                             sessionName,
-                            style: TextStyle(
+                            style: GoogleFonts.bebasNeue(
                               color: Colors.white,
-                              fontSize: 25,
-                              fontFamily: 'BebasNeue',
+                              fontSize: 30,
                             ),
                             textAlign: TextAlign.center,
                           ),
