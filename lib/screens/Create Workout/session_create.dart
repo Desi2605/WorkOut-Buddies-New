@@ -3,9 +3,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:test_project1/reusable_widgets/resusable_widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:test_project1/screens/Report/createreport.dart';
 import 'package:test_project1/screens/View%20Workouts/session_detail.dart';
 import 'package:test_project1/screens/Workout%20Challeng/challenge_detail.dart';
+import '../Auth/signin_screen.dart';
+import '../Created Session/created_session.dart';
 import '../Homescreen/homescreen_screen.dart';
+import '../Joined Session/joined_session.dart';
 
 class SessionCreate extends StatefulWidget {
   const SessionCreate({Key? key}) : super(key: key);
@@ -24,6 +28,7 @@ class _SessionCreateState extends State<SessionCreate> {
   TextEditingController _maximumTextController = TextEditingController();
   String? _selectedWorkoutType;
   String? _selectedMinTime;
+  String? _userFirstName;
 
   List<String> workoutTypes = [
     'Badminton',
@@ -66,10 +71,17 @@ class _SessionCreateState extends State<SessionCreate> {
           },
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 20.5),
-            child: Icon(Icons.person),
-          )
+          IconButton(
+            icon: Icon(Icons.logout_outlined),
+            onPressed: () {
+              FirebaseAuth.instance.signOut();
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => SignInScreen()),
+                (route) => false,
+              );
+            },
+          ),
         ],
       ),
       drawer: Drawer(
@@ -86,7 +98,17 @@ class _SessionCreateState extends State<SessionCreate> {
               },
             ),
             ListTile(
-              title: Text('View Workout Sessions'),
+              title: Text('Create Workout Session'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SessionCreate()),
+                );
+              },
+            ),
+            // Workout Sessions
+            ListTile(
+              title: Text('Workout Sessions'),
               onTap: () {
                 Navigator.push(
                   context,
@@ -95,18 +117,22 @@ class _SessionCreateState extends State<SessionCreate> {
               },
             ),
             ListTile(
-              title: Text('View Workout Challenges'),
+              title: Text('Joined Sessions'),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => ChallengeDetailPage()),
+                  MaterialPageRoute(builder: (context) => JoinedDetailPage()),
                 );
               },
             ),
             ListTile(
-              title: Text('Rewards'),
-              onTap: () {},
+              title: Text('Created Sessions'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CreatedDetailPage()),
+                );
+              },
             ),
           ],
         ),
@@ -306,7 +332,7 @@ class _SessionCreateState extends State<SessionCreate> {
               ),
               SizedBox(height: 20),
               reusableTextField(
-                "Description",
+                "Description(Communication Method)",
                 Icons.description_outlined,
                 false,
                 _descriptionTextController,
@@ -318,7 +344,7 @@ class _SessionCreateState extends State<SessionCreate> {
                     .collection("WorkoutSession")
                     .add({
                   "SessionId": UniqueKey().toString(),
-                  "SessionStatus": "active",
+                  "SessionStatus": "Active",
                   "Title": _workoutTitleTextController.text,
                   "Type": _selectedWorkoutType,
                   "Description": _descriptionTextController.text,
@@ -334,8 +360,8 @@ class _SessionCreateState extends State<SessionCreate> {
                   "Maximum Participants":
                       int.tryParse(_maximumTextController.text) ?? 0,
                   "participants": [
-                    FirebaseAuth.instance.currentUser!.uid
-                  ] // Add owner's ID to participants
+                    _userFirstName ?? ''
+                  ] // Add owner's first name to participants
                 });
 
                 // Get the current user's document reference
@@ -344,6 +370,11 @@ class _SessionCreateState extends State<SessionCreate> {
                     .collection("Users")
                     .doc(user.uid);
 
+                // Fetch the first name of the logged-in user
+                DocumentSnapshot userSnapshot = await userRef.get();
+                String? firstName =
+                    (userSnapshot.data() as Map<String, dynamic>)['Firstname'];
+
                 // Update the user's document to store the new session ID
                 // Add the session ID to the existing array or create a new array if it doesn't exist
                 await userRef.update({
@@ -351,7 +382,7 @@ class _SessionCreateState extends State<SessionCreate> {
                 });
 
                 Navigator.pop(context);
-              }),
+              })
             ],
           ),
         ),

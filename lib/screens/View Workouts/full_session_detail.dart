@@ -3,14 +3,25 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class SessionDetail extends StatelessWidget {
+class SessionDetail extends StatefulWidget {
   final Map<String, dynamic>? sessionData;
 
   const SessionDetail({Key? key, required this.sessionData}) : super(key: key);
 
   @override
+  _SessionDetailState createState() => _SessionDetailState();
+}
+
+class _SessionDetailState extends State<SessionDetail> {
+  bool _isExpandedType = false;
+  bool _isExpandedStartTime = false;
+  bool _isExpandedEndTime = false;
+  bool _isExpandedMaxPeople = false;
+  bool _isExpandedDescription = false;
+
+  @override
   Widget build(BuildContext context) {
-    if (sessionData == null) {
+    if (widget.sessionData == null) {
       return Scaffold(
         appBar: AppBar(
           title: Text('Full Details of Session'),
@@ -21,88 +32,180 @@ class SessionDetail extends StatelessWidget {
       );
     }
 
-    String sessionTitle = sessionData!['Title'] as String? ?? 'No Title';
-    String sessionType = sessionData!['Type'] as String? ?? 'No Type';
-    String sessionDate = sessionData!['Date'] as String? ?? 'No Date';
+    String sessionTitle = widget.sessionData!['Title'] as String? ?? 'No Title';
+    String sessionType = widget.sessionData!['Type'] as String? ?? 'No Type';
+    String sessionDate = widget.sessionData!['Date'] as String? ?? 'No Date';
     String sessionStartTime =
-        sessionData!['Start Time'] as String? ?? 'No Start Time';
+        widget.sessionData!['Start Time'] as String? ?? 'No Start Time';
     String sessionEndTime =
-        sessionData!['End Time'] as String? ?? 'No End Time';
+        widget.sessionData!['End Time'] as String? ?? 'No End Time';
     String maxPeople =
-        sessionData!['Maximum Participants']?.toString() ?? 'No Max People';
+        widget.sessionData!['Maximum Participants']?.toString() ??
+            'No Max People';
     String description =
-        sessionData!['Description'] as String? ?? 'No Description';
+        widget.sessionData!['Description'] as String? ?? 'No Description';
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Full Details of Session'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              sessionTitle,
-              style: GoogleFonts.bebasNeue(
-                fontSize: 35,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Text(
+                  sessionTitle,
+                  style: GoogleFonts.bebasNeue(
+                    fontSize: 35,
+                  ),
+                ),
               ),
-            ),
-            SizedBox(height: 25),
-            Text(
-              ' Workout Type: $sessionType',
-              style: GoogleFonts.bebasNeue(fontSize: 20),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Date: $sessionDate',
-              style: GoogleFonts.bebasNeue(fontSize: 20),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Start Time: $sessionStartTime',
-              style: GoogleFonts.bebasNeue(fontSize: 20),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'End Time: $sessionEndTime',
-              style: GoogleFonts.bebasNeue(fontSize: 20),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Max People: $maxPeople',
-              style: GoogleFonts.bebasNeue(fontSize: 20),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Description: $description',
-              style: GoogleFonts.bebasNeue(fontSize: 20),
-            ),
-            // Display other session details as desired
+              SizedBox(height: 25),
+              ExpansionPanelList(
+                elevation: 1,
+                expandedHeaderPadding: EdgeInsets.all(0),
+                expansionCallback: (int index, bool isExpanded) {
+                  setState(() {
+                    switch (index) {
+                      case 0:
+                        _isExpandedType = !isExpanded;
+                        break;
+                      case 1:
+                        _isExpandedStartTime = !isExpanded;
+                        break;
+                      case 2:
+                        _isExpandedEndTime = !isExpanded;
+                        break;
+                      case 3:
+                        _isExpandedMaxPeople = !isExpanded;
+                        break;
+                      case 4:
+                        _isExpandedDescription = !isExpanded;
+                        break;
+                    }
+                  });
+                },
+                children: [
+                  ExpansionPanel(
+                    headerBuilder: (BuildContext context, bool isExpanded) {
+                      return ListTile(
+                        title: Text(
+                          'Workout Type',
+                          style: GoogleFonts.bebasNeue(fontSize: 20),
+                        ),
+                      );
+                    },
+                    body: ListTile(
+                      title: Text(
+                        sessionType,
+                        style: GoogleFonts.bebasNeue(fontSize: 16),
+                      ),
+                    ),
+                    isExpanded: _isExpandedType,
+                  ),
+                  ExpansionPanel(
+                    headerBuilder: (BuildContext context, bool isExpanded) {
+                      return ListTile(
+                        title: Text(
+                          'Start Time',
+                          style: GoogleFonts.bebasNeue(fontSize: 20),
+                        ),
+                      );
+                    },
+                    body: ListTile(
+                      title: Text(
+                        sessionStartTime,
+                        style: GoogleFonts.bebasNeue(fontSize: 16),
+                      ),
+                    ),
+                    isExpanded: _isExpandedStartTime,
+                  ),
+                  ExpansionPanel(
+                    headerBuilder: (BuildContext context, bool isExpanded) {
+                      return ListTile(
+                        title: Text(
+                          'End Time',
+                          style: GoogleFonts.bebasNeue(fontSize: 20),
+                        ),
+                      );
+                    },
+                    body: ListTile(
+                      title: Text(
+                        sessionEndTime,
+                        style: GoogleFonts.bebasNeue(fontSize: 16),
+                      ),
+                    ),
+                    isExpanded: _isExpandedEndTime,
+                  ),
+                  ExpansionPanel(
+                    headerBuilder: (BuildContext context, bool isExpanded) {
+                      return ListTile(
+                        title: Text(
+                          'Max People',
+                          style: GoogleFonts.bebasNeue(fontSize: 20),
+                        ),
+                      );
+                    },
+                    body: ListTile(
+                      title: Text(
+                        maxPeople,
+                        style: GoogleFonts.bebasNeue(fontSize: 16),
+                      ),
+                    ),
+                    isExpanded: _isExpandedMaxPeople,
+                  ),
+                  ExpansionPanel(
+                    headerBuilder: (BuildContext context, bool isExpanded) {
+                      return ListTile(
+                        title: Text(
+                          'Description',
+                          style: GoogleFonts.bebasNeue(fontSize: 20),
+                        ),
+                      );
+                    },
+                    body: ListTile(
+                      title: Text(
+                        description,
+                        style: GoogleFonts.bebasNeue(fontSize: 16),
+                      ),
+                    ),
+                    isExpanded: _isExpandedDescription,
+                  ),
+                ],
+              ),
+              SizedBox(height: 50),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () async {
+                    FirebaseAuth auth = FirebaseAuth.instance;
+                    User? user = auth.currentUser;
 
-            SizedBox(height: 50),
-            ElevatedButton(
-              onPressed: () async {
-                FirebaseAuth auth = FirebaseAuth.instance;
-                User? user = auth.currentUser;
+                    if (user != null) {
+                      String sessionId =
+                          widget.sessionData!['SessionId'] as String? ?? '';
 
-                if (user != null) {
-                  String sessionId = sessionData!['SessionId'] as String? ?? '';
+                      String firstName = await fetchUserFirstName(user.uid!);
 
-                  String firstName = await fetchUserFirstName(user.uid!);
-
-                  if (firstName.isNotEmpty) {
-                    joinSession(sessionId, firstName, maxPeople, context);
-                  } else {
-                    print('User does not have a valid first name');
-                  }
-                } else {
-                  print('User not logged in');
-                }
-              },
-              child: Text('Join Session'),
-            ),
-          ],
+                      if (firstName.isNotEmpty) {
+                        joinSession(sessionId, firstName, maxPeople, context);
+                      } else {
+                        print('User does not have a valid first name');
+                      }
+                    } else {
+                      print('User not logged in');
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                  ),
+                  child: Text('Join Session'),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

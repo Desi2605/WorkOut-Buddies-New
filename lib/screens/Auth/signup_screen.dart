@@ -109,8 +109,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           "Username": _userNameTextController.text,
                           "Email": _emailTextController.text,
                           "Password": _passwordTextController.text,
-                          "CreatedSession": "",
-                          "JoinedSessions": "",
+                          "CreatedSession": [],
+                          "JoinedSessions": [],
                           "AccountStatus":
                               "Active", // Set the account status as "active"
                         }).then((_) {

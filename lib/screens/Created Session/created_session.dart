@@ -6,6 +6,7 @@ import 'package:test_project1/screens/Joined%20Session/joined_Session_display.da
 import 'package:test_project1/screens/Create%20Workout/session_create.dart';
 import 'package:test_project1/screens/View%20Workouts/session_detail.dart';
 
+import '../Homescreen/homescreen_screen.dart';
 import '../Joined Session/joined_session.dart';
 
 class CreatedDetailPage extends StatelessWidget {
@@ -41,6 +42,15 @@ class CreatedDetailPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ListTile(
+              title: Text('Homepage'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                );
+              },
+            ),
+            ListTile(
               title: Text('Create Workout Session'),
               onTap: () {
                 Navigator.push(
@@ -49,6 +59,7 @@ class CreatedDetailPage extends StatelessWidget {
                 );
               },
             ),
+            // Workout Sessions
             ListTile(
               title: Text('Workout Sessions'),
               onTap: () {

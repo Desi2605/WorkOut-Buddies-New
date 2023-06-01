@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:test_project1/screens/Report/createreport.dart';
 import 'package:test_project1/screens/Workout%20Challeng/challenge_detail.dart';
 import 'package:test_project1/screens/View%20Workouts/full_session_detail.dart';
 import 'package:test_project1/screens/Create%20Workout/session_create.dart';
@@ -88,8 +89,13 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             //Rewards
             ListTile(
-              title: Text('Contact Us'),
-              onTap: () {},
+              title: Text('Report'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ReportCreate()),
+                );
+              },
             ),
           ],
         ),
@@ -101,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
         //Choose the best Workout For you
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25.0),
-          child: Text("Choose the WorkOut that you prefer",
+          child: Text("Workouts Avaliable in Uniten",
               style: GoogleFonts.bebasNeue(fontSize: 45, color: Colors.white)),
         ),
         SizedBox(height: 25),
@@ -120,56 +126,63 @@ class _HomeScreenState extends State<HomeScreen> {
               WorkoutTile(
                 workoutImagePath: 'lib/images/img1.jpg',
                 workoutName: 'BADMINTON',
-                workoutDescrip: 'LOCATED IN DSS',
-                workoutDescrip1: 'Badminton is ',
+                workoutDescrip: 'LOCATED IN DEWAN SERI SARJANA',
+                workoutDescrip1:
+                    'Badminton is a racquet sport played using racquets to hit a shuttlecock across a net.   ',
               ),
               WorkoutTile(
                 workoutImagePath: 'lib/images/img2.jpg',
                 workoutName: 'JOGGING',
                 workoutDescrip: 'AROUND THE CAMPUS',
-                workoutDescrip1: 'Test',
+                workoutDescrip1:
+                    'There are spots where you can jog around the campus. The management has a walkway all around the campus.',
               ),
               WorkoutTile(
                 workoutImagePath: 'lib/images/img3.jpg',
                 workoutName: 'GYM',
-                workoutDescrip: 'LOCATED IN DSS',
-                workoutDescrip1: 'Test',
+                workoutDescrip: 'LOCATED IN DEWAN SERI SARJANA',
+                workoutDescrip1:
+                    'Treadmill,Weights and the avaliable items which will be in a gym is provided in the gym',
               ),
               WorkoutTile(
                 workoutImagePath: 'lib/images/futsal.jpg',
                 workoutName: 'FUTSAL',
                 workoutDescrip: 'LOCATED IN SPORTS ARENA',
-                workoutDescrip1: 'Test',
+                workoutDescrip1:
+                    'The court in sports arena is newly build. There is 2 courts provided. Its free for uniten students only',
               ),
               WorkoutTile(
                 workoutImagePath: 'lib/images/volleyball.jpg',
                 workoutName: 'VOLLEYBALL',
                 workoutDescrip: 'LOCATED IN SPORTS ARENA',
-                workoutDescrip1: 'Test',
+                workoutDescrip1: 'One court is newly done in thee sports arena',
               ),
               WorkoutTile(
                 workoutImagePath: 'lib/images/tennis.jpg',
                 workoutName: 'TENNIS',
-                workoutDescrip: 'LOCATED IN SPORTS ARENA',
-                workoutDescrip1: 'Test',
+                workoutDescrip: 'LOCATED IN BEHIND STADIUM',
+                workoutDescrip1:
+                    'There is no booking needed. You can just go and start playing',
               ),
               WorkoutTile(
                 workoutImagePath: 'lib/images/basketball.jpeg',
                 workoutName: 'BASKETBALL',
                 workoutDescrip: 'LOCATED IN SPORTS ARENA',
-                workoutDescrip1: 'Test',
+                workoutDescrip1:
+                    '1 courts is there in sports arena. You have to make a booking. But the facility is free for students',
               ),
               WorkoutTile(
                 workoutImagePath: 'lib/images/swimming.jpeg',
                 workoutName: 'SWIMMING',
-                workoutDescrip: 'LOCATED IN SPORTS ARENA',
-                workoutDescrip1: 'Test',
+                workoutDescrip: 'LOCATED IN UNITEN SWIMMING POOL',
+                workoutDescrip1:
+                    'You need to wear proper swimming suit and bring a headcap for swimming',
               ),
               WorkoutTile(
                 workoutImagePath: 'lib/images/football.jpeg',
                 workoutName: 'FOOTBALL',
-                workoutDescrip: 'LOCATED IN SPORTS ARENA',
-                workoutDescrip1: 'Test',
+                workoutDescrip: 'LOCATED IN ILSAS',
+                workoutDescrip1: 'Get a team and time to play',
               ),
             ],
           ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'edit.dart';
+
 class CreateSessionDetail extends StatefulWidget {
   final Map<String, dynamic>? sessionData;
   final String sessionId; // Add this property
@@ -20,6 +22,7 @@ class _CreateSessionDetailState extends State<CreateSessionDetail> {
   bool _isExpandedDescription = false;
   bool _isExpandedMaxPeople = false;
   bool _isExpandedTime = false;
+  bool _isExpandedDate = false;
 
   @override
   Widget build(BuildContext context) {
@@ -85,28 +88,42 @@ class _CreateSessionDetailState extends State<CreateSessionDetail> {
                 style: GoogleFonts.bebasNeue(fontSize: 20),
               ),
               SizedBox(height: 20),
-              Text(
-                'Date: $sessionDate',
-                style: GoogleFonts.bebasNeue(fontSize: 20),
-              ),
-              SizedBox(height: 20),
               ExpansionPanelList(
                 elevation: 1,
                 expandedHeaderPadding: EdgeInsets.all(0),
                 expansionCallback: (int index, bool isExpanded) {
                   setState(() {
                     if (index == 0) {
-                      _isExpandedTime = !isExpanded;
+                      _isExpandedDate = !isExpanded;
                     } else if (index == 1) {
-                      _isExpandedMaxPeople = !isExpanded;
+                      _isExpandedTime = !isExpanded;
                     } else if (index == 2) {
-                      _isExpandedDescription = !isExpanded;
+                      _isExpandedMaxPeople = !isExpanded;
                     } else if (index == 3) {
+                      _isExpandedDescription = !isExpanded;
+                    } else if (index == 4) {
                       _isExpandedParticipants = !isExpanded;
                     }
                   });
                 },
                 children: [
+                  ExpansionPanel(
+                    headerBuilder: (BuildContext context, bool isExpanded) {
+                      return ListTile(
+                        title: Text(
+                          'Date',
+                          style: GoogleFonts.bebasNeue(fontSize: 20),
+                        ),
+                      );
+                    },
+                    body: ListTile(
+                      title: Text(
+                        'Date: $sessionDate',
+                        style: GoogleFonts.bebasNeue(fontSize: 16),
+                      ),
+                    ),
+                    isExpanded: _isExpandedDate,
+                  ),
                   ExpansionPanel(
                     headerBuilder: (BuildContext context, bool isExpanded) {
                       return ListTile(
@@ -195,6 +212,14 @@ class _CreateSessionDetailState extends State<CreateSessionDetail> {
   }
 
   void _handleEditButtonPressed() {
-    print('Edit button pressed');
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditPage(
+          sessionData: widget.sessionData,
+          sessionId: widget.sessionId, // Add the sessionId property
+        ),
+      ),
+    );
   }
 }

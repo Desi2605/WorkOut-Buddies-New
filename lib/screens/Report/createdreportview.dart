@@ -4,15 +4,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:test_project1/screens/Homescreen/homescreen_screen.dart';
 import 'package:test_project1/screens/Joined%20Session/joined_Session_display.dart';
 import 'package:test_project1/screens/Create%20Workout/session_create.dart';
+import 'package:test_project1/screens/Report/detailedview.dart';
 import 'package:test_project1/screens/View%20Workouts/session_detail.dart';
 import 'package:test_project1/utils/colors_util.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../Auth/signin_screen.dart';
 import '../Created Session/created_session.dart';
 import '../View Workouts/full_session_detail.dart';
 
-class JoinedDetailPage extends StatelessWidget {
+class ReportDetailPage extends StatelessWidget {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -34,16 +34,9 @@ class JoinedDetailPage extends StatelessWidget {
           },
         ),
         actions: [
-          IconButton(
-            icon: Icon(Icons.logout_outlined),
-            onPressed: () {
-              FirebaseAuth.instance.signOut();
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => SignInScreen()),
-                (route) => false,
-              );
-            },
+          Padding(
+            padding: const EdgeInsets.only(right: 20.5),
+            child: Icon(Icons.person),
           ),
         ],
       ),
@@ -60,43 +53,7 @@ class JoinedDetailPage extends StatelessWidget {
                 );
               },
             ),
-            ListTile(
-              title: Text('Create Workout Session'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SessionCreate()),
-                );
-              },
-            ),
-            // Workout Sessions
-            ListTile(
-              title: Text('Workout Sessions'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SessionDetailPage()),
-                );
-              },
-            ),
-            ListTile(
-              title: Text('Joined Sessions'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => JoinedDetailPage()),
-                );
-              },
-            ),
-            ListTile(
-              title: Text('Created Sessions'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => CreatedDetailPage()),
-                );
-              },
-            ),
+            ListTile(title: Text('View Reports'), onTap: () {}),
           ],
         ),
       ),
@@ -110,7 +67,7 @@ class JoinedDetailPage extends StatelessWidget {
           }
           if (snapshot.hasData && snapshot.data!.exists) {
             final List<String> sessionIds =
-                List<String>.from(snapshot.data!.get('JoinedSessions'));
+                List<String>.from(snapshot.data!.get('Report'));
 
             if (sessionIds.isEmpty) {
               return Center(
@@ -125,7 +82,7 @@ class JoinedDetailPage extends StatelessWidget {
 
                 return FutureBuilder<DocumentSnapshot>(
                   future: FirebaseFirestore.instance
-                      .collection('WorkoutSession')
+                      .collection('Reports')
                       .doc(sessionId)
                       .get(),
                   builder: (context, snapshot) {
@@ -146,9 +103,10 @@ class JoinedDetailPage extends StatelessWidget {
                               vertical: 20, horizontal: 18),
                           child: Text(
                             sessionName,
-                            style: GoogleFonts.bebasNeue(
+                            style: TextStyle(
                               color: Colors.white,
-                              fontSize: 30,
+                              fontSize: 25,
+                              fontFamily: 'BebasNeue',
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -157,7 +115,7 @@ class JoinedDetailPage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => JoinSessionDetail(
+                              builder: (context) => ReportDetailed(
                                 sessionData: sessionSnapshot.data()
                                     as Map<String, dynamic>,
                                 sessionId:

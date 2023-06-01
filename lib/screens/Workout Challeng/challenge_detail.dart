@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:test_project1/screens/Homescreen/homescreen_screen.dart';
 import 'package:test_project1/screens/View%20Workouts/session_detail.dart';
 
+import '../Create Workout/session_create.dart';
+import '../Report/createreport.dart';
 import 'full_challenge_detail.dart';
 
 class ChallengeDetailPage extends StatelessWidget {
@@ -12,10 +15,10 @@ class ChallengeDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Colors.grey[900],
+      backgroundColor: Color.fromARGB(255, 39, 39, 39),
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.transparent,
+        backgroundColor: Color.fromARGB(0, 0, 0, 0),
         leading: IconButton(
           icon: Icon(Icons.menu),
           onPressed: () {
@@ -33,7 +36,8 @@ class ChallengeDetailPage extends StatelessWidget {
       //------------------------------------------------------------------//
       drawer: Drawer(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment:
+              MainAxisAlignment.center, //Need to Edit this to make it Nice
           children: [
             ListTile(
               title: Text('Homepage'),
@@ -44,6 +48,15 @@ class ChallengeDetailPage extends StatelessWidget {
                 );
               },
             ),
+            ListTile(
+              title: Text('Create Workout Session'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SessionCreate()),
+                );
+              },
+            ),
             // Workout Sessions
             ListTile(
               title: Text('Workout Sessions'),
@@ -51,6 +64,28 @@ class ChallengeDetailPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => SessionDetailPage()),
+                );
+              },
+            ),
+
+            // View Challenges
+            ListTile(
+              title: Text('Workout Challenges'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ChallengeDetailPage()),
+                );
+              },
+            ),
+            //Rewards
+            ListTile(
+              title: Text('Report'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ReportCreate()),
                 );
               },
             ),
@@ -94,7 +129,7 @@ class ChallengeDetailPage extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: 20, horizontal: 18),
                   child: Text(
                     title,
-                    style: TextStyle(
+                    style: GoogleFonts.bebasNeue(
                       color: Colors.white,
                       fontSize: 25,
                     ),

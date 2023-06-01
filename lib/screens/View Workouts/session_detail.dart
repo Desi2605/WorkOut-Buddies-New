@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:test_project1/reusable_widgets/resusable_widgets.dart';
 import 'package:test_project1/screens/Created%20Session/created_session.dart';
@@ -8,6 +9,9 @@ import 'package:test_project1/utils/colors_util.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:test_project1/screens/View%20Workouts/session_detail.dart';
 import 'package:test_project1/screens/View%20Workouts/full_session_detail.dart';
+
+import '../Auth/signin_screen.dart';
+import '../Homescreen/homescreen_screen.dart';
 
 class SessionDetailPage extends StatelessWidget {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -27,10 +31,17 @@ class SessionDetailPage extends StatelessWidget {
           },
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 20.5),
-            child: Icon(Icons.person),
-          )
+          IconButton(
+            icon: Icon(Icons.logout_outlined),
+            onPressed: () {
+              FirebaseAuth.instance.signOut();
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => SignInScreen()),
+                (route) => false,
+              );
+            },
+          ),
         ],
       ),
 
@@ -39,6 +50,15 @@ class SessionDetailPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            ListTile(
+              title: Text('Homepage'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                );
+              },
+            ),
             ListTile(
               title: Text('Create Workout Session'),
               onTap: () {
@@ -79,7 +99,6 @@ class SessionDetailPage extends StatelessWidget {
           ],
         ),
       ),
-
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('WorkoutSession')

@@ -15,6 +15,10 @@ class ChallengeDetail extends StatefulWidget {
 
 class _ChallengeDetailState extends State<ChallengeDetail> {
   String firstName = '';
+  bool _isExpandedChallengeType = false;
+  bool _isExpandedStartDate = false;
+  bool _isExpandedEndDate = false;
+  bool _isExpandedDescription = false;
 
   @override
   void initState() {
@@ -87,34 +91,102 @@ class _ChallengeDetailState extends State<ChallengeDetail> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              challengeTitle,
-              style: GoogleFonts.bebasNeue(
-                fontSize: 35,
+            Center(
+              child: Text(
+                challengeTitle,
+                style: GoogleFonts.bebasNeue(
+                  fontSize: 35,
+                ),
               ),
             ),
             SizedBox(height: 25),
-            Text(
-              'Challenge Type: $challengeType',
-              style: GoogleFonts.bebasNeue(fontSize: 20),
+            ExpansionPanelList(
+              elevation: 1,
+              expandedHeaderPadding: EdgeInsets.all(0),
+              expansionCallback: (int index, bool isExpanded) {
+                setState(() {
+                  if (index == 0) {
+                    _isExpandedChallengeType = !isExpanded;
+                  } else if (index == 1) {
+                    _isExpandedStartDate = !isExpanded;
+                  } else if (index == 2) {
+                    _isExpandedEndDate = !isExpanded;
+                  } else if (index == 3) {
+                    _isExpandedDescription = !isExpanded;
+                  }
+                });
+              },
+              children: [
+                ExpansionPanel(
+                  headerBuilder: (BuildContext context, bool isExpanded) {
+                    return ListTile(
+                      title: Text(
+                        'Challenge Type',
+                        style: GoogleFonts.bebasNeue(fontSize: 20),
+                      ),
+                    );
+                  },
+                  body: ListTile(
+                    title: Text(
+                      'Type: $challengeType',
+                      style: GoogleFonts.bebasNeue(fontSize: 16),
+                    ),
+                  ),
+                  isExpanded: _isExpandedChallengeType,
+                ),
+                ExpansionPanel(
+                  headerBuilder: (BuildContext context, bool isExpanded) {
+                    return ListTile(
+                      title: Text(
+                        'Start Date',
+                        style: GoogleFonts.bebasNeue(fontSize: 20),
+                      ),
+                    );
+                  },
+                  body: ListTile(
+                    title: Text(
+                      'Start Date: $formattedStartDate',
+                      style: GoogleFonts.bebasNeue(fontSize: 16),
+                    ),
+                  ),
+                  isExpanded: _isExpandedStartDate,
+                ),
+                ExpansionPanel(
+                  headerBuilder: (BuildContext context, bool isExpanded) {
+                    return ListTile(
+                      title: Text(
+                        'End Date',
+                        style: GoogleFonts.bebasNeue(fontSize: 20),
+                      ),
+                    );
+                  },
+                  body: ListTile(
+                    title: Text(
+                      'End Date: $formattedEndDate',
+                      style: GoogleFonts.bebasNeue(fontSize: 16),
+                    ),
+                  ),
+                  isExpanded: _isExpandedEndDate,
+                ),
+                ExpansionPanel(
+                  headerBuilder: (BuildContext context, bool isExpanded) {
+                    return ListTile(
+                      title: Text(
+                        'Description',
+                        style: GoogleFonts.bebasNeue(fontSize: 20),
+                      ),
+                    );
+                  },
+                  body: ListTile(
+                    title: Text(
+                      'Description: $description',
+                      style: GoogleFonts.bebasNeue(fontSize: 16),
+                    ),
+                  ),
+                  isExpanded: _isExpandedDescription,
+                ),
+              ],
             ),
-            SizedBox(height: 20),
-            Text(
-              'Start Date: $formattedStartDate',
-              style: GoogleFonts.bebasNeue(fontSize: 20),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'End Date: $formattedEndDate',
-              style: GoogleFonts.bebasNeue(fontSize: 20),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Description: $description',
-              style: GoogleFonts.bebasNeue(fontSize: 20),
-            ),
-            // Display other session details as desired
-
             SizedBox(height: 50),
             ElevatedButton(
               onPressed: () {
