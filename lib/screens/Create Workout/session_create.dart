@@ -375,10 +375,18 @@ class _SessionCreateState extends State<SessionCreate> {
                 String? firstName =
                     (userSnapshot.data() as Map<String, dynamic>)['Firstname'];
 
-                // Update the user's document to store the new session ID
-                // Add the session ID to the existing array or create a new array if it doesn't exist
+// Add the session ID to the existing array or create a new array if it doesn't exist
                 await userRef.update({
                   "CreatedSession": FieldValue.arrayUnion([sessionRef.id]),
+                });
+
+                await userRef.update({
+                  "JoinedSessions": FieldValue.arrayUnion([sessionRef.id]),
+                });
+
+// Update the session document to add the first name to the participants list
+                await sessionRef.update({
+                  "participants": FieldValue.arrayUnion([firstName]),
                 });
 
                 Navigator.pop(context);

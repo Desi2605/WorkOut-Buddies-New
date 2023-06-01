@@ -277,6 +277,12 @@ class _SessionDetailState extends State<SessionDetail> {
           'participants': FieldValue.arrayUnion([firstName])
         }).then((_) {
           print('Successfully joined the session.');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Successfully joined the session'),
+              duration: Duration(seconds: 3),
+            ),
+          );
 
           // Store the session document ID in the user's document
           FirebaseAuth auth = FirebaseAuth.instance;

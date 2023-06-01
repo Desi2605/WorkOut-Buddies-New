@@ -63,7 +63,6 @@ class _EditPageState extends State<EditPage> {
     _startTimeController.text = widget.sessionData!['Start Time'] ?? '';
     _endTimeController.text = widget.sessionData!['End Time'] ?? '';
     _descriptionController.text = widget.sessionData!['Description'] ?? '';
-    _participantsController.text = widget.sessionData!['Participants'] ?? '';
 
     selectedWorkoutType = widget.sessionData!['Type'] ?? workoutTypeOptions[0];
     selectedMaxParticipants =
@@ -172,19 +171,6 @@ class _EditPageState extends State<EditPage> {
                 },
               ),
               SizedBox(height: 10),
-              TextFormField(
-                controller: _participantsController,
-                decoration: InputDecoration(
-                  labelText: 'Participants',
-                ),
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Please enter participants';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
@@ -205,19 +191,18 @@ class _EditPageState extends State<EditPage> {
     final startTime = _startTimeController.text;
     final endTime = _endTimeController.text;
     final description = _descriptionController.text;
-    final participants = _participantsController.text;
 
     try {
       await FirebaseFirestore.instance
-          .collection('sessions')
+          .collection('WorkoutSession')
           .doc(widget.sessionId)
           .update({
         'Title': title,
         'Type': selectedWorkoutType,
+        'Maximum Participants': selectedMaxParticipants,
         'Start Time': startTime,
         'End Time': endTime,
         'Description': description,
-        'Participants': participants,
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
