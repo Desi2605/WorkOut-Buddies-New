@@ -1,16 +1,9 @@
-# test_project1
+# This would be my final year project
 
-A new Flutter project.
+The Uniten Workout Buddies
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+I have developed this application to assist the students of uniten to find out their workout buddies in this application. 
+This application is codded in flutter language in dart programmming
+The admin portal also uses flutter and its called admin_mastter
